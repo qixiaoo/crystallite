@@ -39,7 +39,7 @@ fun ComicCarousel(
             .height(height)
             .then(modifier)
     ) {
-        itemsIndexed(comics, key = { _, item -> item.title }) { index, item ->
+        itemsIndexed(comics, key = { index, _ -> index }) { index, item ->
             val firstCover = item.mdCovers.getOrNull(0)?.b2key
             val cover = if (firstCover == null) null else prefix.plus(firstCover)
             OrderedCover(

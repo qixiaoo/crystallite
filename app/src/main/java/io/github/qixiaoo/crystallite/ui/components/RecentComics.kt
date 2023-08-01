@@ -34,7 +34,6 @@ import io.github.qixiaoo.crystallite.logic.model.ComicListOrderedByPeriod
 import io.github.qixiaoo.crystallite.logic.model.ContentRating
 import io.github.qixiaoo.crystallite.logic.model.MdCover
 import io.github.qixiaoo.crystallite.ui.theme.CrystalliteTheme
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -82,7 +81,8 @@ fun CompactFilterChips(items: List<String>, current: Int, onSelect: (Int) -> Uni
         )
     ) {
         items.forEachIndexed { index, item ->
-            CompactFilterChip(selected = index == current,
+            CompactFilterChip(
+                selected = index == current,
                 label = item,
                 onClick = { onSelect(index) })
         }
@@ -130,7 +130,6 @@ fun RecentComics(
             CompactFilterChips(items = filters, current = period) {
                 period = it
                 coroutineScope.launch {
-                    delay(500)
                     comicCarouselState.animateScrollToItem(index = 0)
                 }
             }
