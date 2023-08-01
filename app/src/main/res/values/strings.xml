@@ -1,3 +1,24 @@
 <resources>
-    <string name="app_name">crystallite</string>
+    <string name="app_name">Crystallite</string>
+
+
+    <!-- tab bar -->
+    <string name="home">Home</string>
+    <string name="bookshelf">My List</string>
+    <string name="me">Me</string>
+
+    <!-- filters -->
+    <string name="week">7d</string>
+    <string name="month">1m</string>
+    <string name="quarter">3m</string>
+
+    <!-- home screen comics -->
+    <string name="most_viewed">Most Viewed</string>
+    <string name="popular_new_comics">Popular New Comics</string>
+    <string name="popular_ongoing">Popular Ongoing</string>
+    <string name="complete_series">Complete Series</string>
+    <string name="recently_added">Recently Added</string>
+
+    <!-- image link prefix -->
+    <string name="pictures_site">https://meo.comick.pictures/</string>
 </resources>
