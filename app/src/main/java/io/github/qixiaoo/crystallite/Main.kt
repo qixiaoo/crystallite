@@ -34,6 +34,11 @@ fun Main() {
             Scaffold(
                 bottomBar = {
                     TabBar(currRoute) {
+                        // avoid navigating to the current tab
+                        if (currRoute.equals(it.route)) {
+                            return@TabBar
+                        }
+
                         // clear back stack and navigate to target tab screen
                         navController.navigate(it.route) {
                             popUpTo(navController.graph.id) {
