@@ -18,7 +18,4 @@
     <string name="popular_ongoing">Popular Ongoing</string>
     <string name="complete_series">Complete Series</string>
     <string name="recently_added">Recently Added</string>
-
-    <!-- image link prefix -->
-    <string name="pictures_site">https://meo.comick.pictures/</string>
 </resources>

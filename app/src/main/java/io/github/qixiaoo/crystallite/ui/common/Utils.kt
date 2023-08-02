@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import io.github.qixiaoo.crystallite.logic.model.Comic
 
 fun Float.px2dp(context: Context): Dp {
     return Dp(this / context.resources.displayMetrics.density)
@@ -44,3 +45,8 @@ fun Modifier.shadow(
         )
     }
 })
+
+fun getCoverUrl(comic: Comic): String? {
+    val firstCover = comic.mdCovers.getOrNull(0)?.b2key
+    return if (firstCover == null) null else PICTURES_SITE.plus(firstCover)
+}

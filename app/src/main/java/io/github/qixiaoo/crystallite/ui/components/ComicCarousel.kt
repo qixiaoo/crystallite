@@ -9,13 +9,12 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.github.qixiaoo.crystallite.R
 import io.github.qixiaoo.crystallite.logic.model.Comic
 import io.github.qixiaoo.crystallite.logic.model.ContentRating
 import io.github.qixiaoo.crystallite.logic.model.MdCover
+import io.github.qixiaoo.crystallite.ui.common.getCoverUrl
 import io.github.qixiaoo.crystallite.ui.theme.CrystalliteTheme
 
 
@@ -26,8 +25,6 @@ fun ComicCarousel(
     contentPadding: PaddingValues = PaddingValues(0.dp),
     state: LazyListState = rememberLazyListState(),
 ) {
-    val prefix = stringResource(R.string.pictures_site)
-
     val horizontalArrangement = 10.dp
     val height = 144.dp
 
@@ -40,8 +37,7 @@ fun ComicCarousel(
             .then(modifier)
     ) {
         itemsIndexed(comics, key = { index, _ -> index }) { index, item ->
-            val firstCover = item.mdCovers.getOrNull(0)?.b2key
-            val cover = if (firstCover == null) null else prefix.plus(firstCover)
+            val cover = getCoverUrl(item)
             OrderedCover(
                 title = item.title,
                 seqNo = index + 1,

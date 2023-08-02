@@ -35,7 +35,7 @@ import io.github.qixiaoo.crystallite.ui.theme.CrystalliteTheme
 fun OrderedCover(
     modifier: Modifier = Modifier,
     title: String,
-    seqNo: Int,
+    seqNo: Int?,
     cover: String?,
     onClick: () -> Unit = {},
 ) {
@@ -70,12 +70,14 @@ fun OrderedCover(
         )
 
         // sequence number
-        Badge(
-            containerColor = colorScheme.primary,
-            contentColor = colorScheme.onPrimary,
-            modifier = Modifier.padding(start = 4.dp, top = 4.dp)
-        ) {
-            Text(text = seqNo.toString(), modifier = Modifier.padding(start = 4.dp, end = 4.dp))
+        if (seqNo != null) {
+            Badge(
+                containerColor = colorScheme.primary,
+                contentColor = colorScheme.onPrimary,
+                modifier = Modifier.padding(start = 4.dp, top = 4.dp)
+            ) {
+                Text(text = seqNo.toString(), modifier = Modifier.padding(start = 4.dp, end = 4.dp))
+            }
         }
 
         // title
