@@ -33,8 +33,8 @@ fun Modifier.shadow(
 
         val leftPixel = offsetX.toPx()
         val topPixel = offsetY.toPx()
-        val rightPixel = size.width + topPixel
-        val bottomPixel = size.height + leftPixel
+        val rightPixel = size.width + leftPixel
+        val bottomPixel = size.height + topPixel
 
         canvas.drawRect(
             left = leftPixel,
