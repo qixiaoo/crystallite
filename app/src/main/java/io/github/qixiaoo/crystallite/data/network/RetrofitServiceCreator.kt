@@ -1,4 +1,4 @@
-package io.github.qixiaoo.crystallite.logic.network
+package io.github.qixiaoo.crystallite.data.network
 
 import android.app.Application
 import okhttp3.Cache

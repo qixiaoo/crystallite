@@ -4,11 +4,11 @@ import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material3.ExperimentalMaterial3Api
-import io.github.qixiaoo.crystallite.logic.network.RetrofitServiceCreator
+import dagger.hilt.android.AndroidEntryPoint
+import io.github.qixiaoo.crystallite.data.network.RetrofitServiceCreator
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import io.github.qixiaoo.crystallite.logic.model.Comic
+import io.github.qixiaoo.crystallite.data.model.Comic
 
 fun Float.px2dp(context: Context): Dp {
     return Dp(this / context.resources.displayMetrics.density)

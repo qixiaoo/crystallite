@@ -29,10 +29,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.github.qixiaoo.crystallite.R
-import io.github.qixiaoo.crystallite.logic.model.Comic
-import io.github.qixiaoo.crystallite.logic.model.ComicListOrderedByPeriod
-import io.github.qixiaoo.crystallite.logic.model.ContentRating
-import io.github.qixiaoo.crystallite.logic.model.MdCover
+import io.github.qixiaoo.crystallite.data.model.Comic
+import io.github.qixiaoo.crystallite.data.model.ComicListOrderedByPeriod
+import io.github.qixiaoo.crystallite.data.model.ContentRating
+import io.github.qixiaoo.crystallite.data.model.MdCover
 import io.github.qixiaoo.crystallite.ui.theme.CrystalliteTheme
 import kotlinx.coroutines.launch
 

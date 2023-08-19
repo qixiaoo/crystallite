@@ -1,4 +1,4 @@
-package io.github.qixiaoo.crystallite.logic.model
+package io.github.qixiaoo.crystallite.data.model
 
 import com.google.gson.annotations.SerializedName
 

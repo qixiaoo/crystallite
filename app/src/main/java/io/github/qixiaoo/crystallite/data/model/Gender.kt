@@ -1,4 +1,4 @@
-package io.github.qixiaoo.crystallite.logic.model
+package io.github.qixiaoo.crystallite.data.model
 
 enum class Gender(private val value: Int) {
     MALE(1),
