@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,23 +19,47 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import io.github.qixiaoo.crystallite.R
-import io.github.qixiaoo.crystallite.ui.common.GRID_ROW_ITEM_COUNT
+import io.github.qixiaoo.crystallite.common.GRID_ROW_ITEM_COUNT
+import io.github.qixiaoo.crystallite.data.model.Comic
+import io.github.qixiaoo.crystallite.data.model.TopComics
 import io.github.qixiaoo.crystallite.ui.common.getCoverUrl
+import io.github.qixiaoo.crystallite.ui.components.ErrorMessage
 import io.github.qixiaoo.crystallite.ui.components.OrderedCover
 import io.github.qixiaoo.crystallite.ui.components.RecentComics
 
 
 @Composable
-internal fun Home(homeViewModel: HomeViewModel = hiltViewModel()) {
+internal fun Home(
+    onComicClick: (slug: String) -> Unit, homeViewModel: HomeViewModel = hiltViewModel()
+) {
+    val topComicsState by homeViewModel.topComicsUiState.collectAsStateWithLifecycle()
+    val news by homeViewModel.news.collectAsStateWithLifecycle()
+    val completions by homeViewModel.completions.collectAsStateWithLifecycle()
+
+    when (topComicsState) {
+        is TopComicsUiState.Error -> ErrorMessage(message = (topComicsState as TopComicsUiState.Error).message)
+        TopComicsUiState.Loading -> LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+        is TopComicsUiState.Success -> HomeContent(
+            topComics = (topComicsState as TopComicsUiState.Success).topComics,
+            news = news,
+            completions = completions,
+            onComicClick = onComicClick,
+        )
+    }
+}
+
+
+@Composable
+private fun HomeContent(
+    topComics: TopComics,
+    news: List<List<Comic>>,
+    completions: List<List<Comic>>,
+    onComicClick: (slug: String) -> Unit,
+) {
     val typography = MaterialTheme.typography
     val colorScheme = MaterialTheme.colorScheme
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-
-    val topComics by homeViewModel.topComics.collectAsStateWithLifecycle()
-    val news by homeViewModel.news.collectAsStateWithLifecycle()
-    val completions by homeViewModel.completions.collectAsStateWithLifecycle()
 
     val padding = 20.dp
     val spaceBetween = 30.dp
@@ -51,6 +76,7 @@ internal fun Home(homeViewModel: HomeViewModel = hiltViewModel()) {
                 comics = topComics.trending,
                 title = stringResource(id = R.string.most_viewed),
                 padding = padding,
+                onClick = { comic, _ -> onComicClick(comic.slug) },
                 modifier = Modifier.padding(top = spaceBetween)
             )
         }
@@ -60,6 +86,7 @@ internal fun Home(homeViewModel: HomeViewModel = hiltViewModel()) {
                 comics = topComics.topFollowNewComics,
                 title = stringResource(id = R.string.popular_new_comics),
                 padding = padding,
+                onClick = { comic, _ -> onComicClick(comic.slug) },
                 modifier = Modifier.padding(top = spaceBetween)
             )
         }
@@ -83,7 +110,10 @@ internal fun Home(homeViewModel: HomeViewModel = hiltViewModel()) {
             ) {
                 it.forEach { comic ->
                     OrderedCover(
-                        title = comic.title, seqNo = null, cover = getCoverUrl(comic),
+                        title = comic.title,
+                        seqNo = null,
+                        cover = getCoverUrl(comic),
+                        onClick = { onComicClick(comic.slug) },
                     )
                 }
             }
@@ -115,7 +145,10 @@ internal fun Home(homeViewModel: HomeViewModel = hiltViewModel()) {
             ) {
                 comics.forEach { comic ->
                     OrderedCover(
-                        title = comic.title, seqNo = null, cover = getCoverUrl(comic),
+                        title = comic.title,
+                        seqNo = null,
+                        cover = getCoverUrl(comic),
+                        onClick = { onComicClick(comic.slug) },
                     )
                 }
             }

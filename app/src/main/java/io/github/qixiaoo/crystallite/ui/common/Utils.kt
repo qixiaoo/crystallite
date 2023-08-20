@@ -11,6 +11,10 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.github.qixiaoo.crystallite.data.model.Comic
+import io.github.qixiaoo.crystallite.R
+import io.github.qixiaoo.crystallite.common.PICTURES_SITE
+import io.github.qixiaoo.crystallite.data.model.MdCover
+import io.github.qixiaoo.crystallite.data.model.ProgressStatus
 
 fun Float.px2dp(context: Context): Dp {
     return Dp(this / context.resources.displayMetrics.density)
@@ -49,4 +53,18 @@ fun Modifier.shadow(
 fun getCoverUrl(comic: Comic): String? {
     val firstCover = comic.mdCovers.getOrNull(0)?.b2key
     return if (firstCover == null) null else PICTURES_SITE.plus(firstCover)
+}
+
+fun getCoverUrl(mdCovers: List<MdCover>): String? {
+    val firstCover = mdCovers.getOrNull(0)?.b2key
+    return if (firstCover == null) null else PICTURES_SITE.plus(firstCover)
+}
+
+fun ProgressStatus.toResourceId(): Int {
+    return when (this) {
+        ProgressStatus.ONGOING -> R.string.ongoing
+        ProgressStatus.COMPLETED -> R.string.completed
+        ProgressStatus.CANCELLED -> R.string.cancelled
+        ProgressStatus.HIATUS -> R.string.hiatus
+    }
 }

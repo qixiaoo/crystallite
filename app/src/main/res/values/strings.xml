@@ -18,4 +18,18 @@
     <string name="popular_ongoing">Popular Ongoing</string>
     <string name="complete_series">Complete Series</string>
     <string name="recently_added">Recently Added</string>
+
+    <!-- name of chapter list item-->
+    <string name="chapter_name">Chapter %1$s</string>
+    <string name="chapter_name_title">Chapter %1$s: %2$s</string>
+    <string name="chapter_name_volume">Volume %1$s</string>
+
+    <string name="default_error_message">An error has occurred.</string>
+
+    <!-- progress status -->
+    <string name="status">Status:</string>
+    <string name="ongoing">Ongoing</string>
+    <string name="completed">Completed</string>
+    <string name="cancelled">Cancelled</string>
+    <string name="hiatus">Hiatus</string>
 </resources>

@@ -24,6 +24,7 @@ fun ComicCarousel(
     comics: List<Comic>,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     state: LazyListState = rememberLazyListState(),
+    onClick: (comic: Comic, index: Int) -> Unit = { _, _ -> }
 ) {
     val horizontalArrangement = 10.dp
     val height = 144.dp
@@ -42,6 +43,7 @@ fun ComicCarousel(
                 title = item.title,
                 seqNo = index + 1,
                 cover = cover,
+                onClick = { onClick(item, index) }
             )
         }
     }

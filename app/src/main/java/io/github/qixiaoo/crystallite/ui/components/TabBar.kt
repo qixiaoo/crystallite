@@ -49,7 +49,7 @@ fun TabBar(
         ),
     )
 
-    tabItems.forEachIndexed { index, item -> item.selected = currRoute == item.route.route }
+    tabItems.forEachIndexed { _, item -> item.selected = currRoute == item.route.route }
 
     NavigationBar {
         tabItems.forEachIndexed { _, item ->

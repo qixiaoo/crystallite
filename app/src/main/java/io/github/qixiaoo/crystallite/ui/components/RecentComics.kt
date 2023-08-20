@@ -95,7 +95,8 @@ fun RecentComics(
     modifier: Modifier = Modifier,
     comics: ComicListOrderedByPeriod,
     title: String,
-    padding: Dp = 0.dp
+    padding: Dp = 0.dp,
+    onClick: (comic: Comic, index: Int) -> Unit = { _, _ -> }
 ) {
     val typography = MaterialTheme.typography
     val colorScheme = MaterialTheme.colorScheme
@@ -139,7 +140,8 @@ fun RecentComics(
         ComicCarousel(
             comics = comicsList[period],
             contentPadding = PaddingValues(horizontal = padding),
-            state = comicCarouselState
+            state = comicCarouselState,
+            onClick = onClick
         )
     }
 }
