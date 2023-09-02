@@ -54,7 +54,7 @@ import io.github.qixiaoo.crystallite.ui.components.ErrorMessage
 private val CHAPTER_HEIGHT = 56.dp
 
 @Composable
-internal fun Comic(comicViewModel: ComicViewModel = hiltViewModel()) {
+internal fun Comic(onChapterClick: (chapter: ChapterDetail) -> Unit, comicViewModel: ComicViewModel = hiltViewModel()) {
     val comicState by comicViewModel.comicUiState.collectAsStateWithLifecycle()
 
     when (comicState) {
@@ -71,7 +71,8 @@ internal fun Comic(comicViewModel: ComicViewModel = hiltViewModel()) {
                             comickRepository = comicViewModel.comickRepository
                         ) as T
                     }
-                })
+                }),
+                onChapterClick = onChapterClick
             )
         }
     }
@@ -79,7 +80,9 @@ internal fun Comic(comicViewModel: ComicViewModel = hiltViewModel()) {
 
 @Composable
 private fun ComicDetail(
-    comicDetail: ComicDetail, chaptersViewModel: ChaptersViewModel
+    comicDetail: ComicDetail,
+    chaptersViewModel: ChaptersViewModel,
+    onChapterClick: (chapter: ChapterDetail) -> Unit = {}
 ) {
     val chapterPagingItems = chaptersViewModel.chaptersUiState.collectAsLazyPagingItems()
 
@@ -99,7 +102,7 @@ private fun ComicDetail(
                 // placeholder
                 Column(modifier = Modifier.height(CHAPTER_HEIGHT), content = {})
             } else {
-                Chapter(chapterItem)
+                Chapter(chapter = chapterItem, onChapterClick = onChapterClick)
             }
         }
 
@@ -235,7 +238,7 @@ private fun ComicDetailHeader(comicDetail: ComicDetail) {
 
 
 @Composable
-private fun Chapter(chapter: ChapterDetail) {
+private fun Chapter(chapter: ChapterDetail, onChapterClick: (chapter: ChapterDetail) -> Unit = {}) {
     val typography = MaterialTheme.typography
 
     val contentHorizontalPadding = 20.dp
@@ -253,7 +256,7 @@ private fun Chapter(chapter: ChapterDetail) {
     Column(modifier = Modifier
         .padding(horizontal = contentHorizontalPadding)
         .height(CHAPTER_HEIGHT)
-        .clickable { }) {
+        .clickable { onChapterClick(chapter) }) {
         Spacer(modifier = Modifier.height(5.dp))
         Text(
             text = title,

@@ -1,4 +1,4 @@
-package io.github.qixiaoo.crystallite.ui.screens.comic
+package io.github.qixiaoo.crystallite.ui.screens.reader
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavController
@@ -7,32 +7,33 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import io.github.qixiaoo.crystallite.ui.common.Route
-import io.github.qixiaoo.crystallite.ui.common.slugArg
+import io.github.qixiaoo.crystallite.ui.common.chapterHidArg
 import java.net.URLDecoder
 
 
 private val URL_CHARACTER_ENCODING = Charsets.UTF_8.name()
 
 
-internal class ComicArgs(val slug: String) {
+internal class ReaderArgs(val chapterHid: String) {
     constructor(savedStateHandle: SavedStateHandle) : this(
         URLDecoder.decode(
             checkNotNull(
-                savedStateHandle[slugArg]
+                savedStateHandle[chapterHidArg]
             ), URL_CHARACTER_ENCODING
         )
     )
 }
 
 
-fun NavGraphBuilder.comic(onChapterClick: (hid: String) -> Unit) {
+fun NavGraphBuilder.reader() {
     composable(
-        Route.Comic.route, arguments = listOf(navArgument(slugArg) { type = NavType.StringType })
+        Route.Reader.route, arguments = listOf(navArgument(chapterHidArg) { type = NavType.StringType })
     ) {
-        it.arguments?.getString(slugArg)?.let { _ -> Comic(onChapterClick = { chapter ->  onChapterClick(chapter.hid) }) }
+        it.arguments?.getString(chapterHidArg)?.let { Reader() }
     }
 }
 
-fun NavController.navigateToComic(slug: String) {
-    this.navigate("comic/$slug")
+
+fun NavController.navigateToReader(chapterHid: String) {
+    this.navigate("reader/$chapterHid")
 }

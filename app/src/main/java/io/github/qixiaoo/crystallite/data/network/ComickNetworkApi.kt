@@ -1,6 +1,7 @@
 package io.github.qixiaoo.crystallite.data.network
 
 import io.github.qixiaoo.crystallite.common.DEFAULT_CHAPTER_PAGE_SIZE
+import io.github.qixiaoo.crystallite.data.model.ReadingChapter
 import io.github.qixiaoo.crystallite.data.model.ComicChapters
 import io.github.qixiaoo.crystallite.data.model.ComicDetail
 import io.github.qixiaoo.crystallite.data.model.Gender
@@ -26,4 +27,10 @@ interface ComickNetworkApi {
         @Query("page") page: Int? = null,
         @Query("limit") pageSize: Int? = DEFAULT_CHAPTER_PAGE_SIZE
     ): ComicChapters
+
+    @GET("chapter/{hid}")
+    suspend fun chapter(
+        @Path("hid") hid: String,
+        @Query("tachiyomi") tachiyomi: Boolean = true,
+    ): ReadingChapter
 }

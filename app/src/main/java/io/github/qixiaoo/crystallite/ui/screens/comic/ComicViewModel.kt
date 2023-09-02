@@ -7,12 +7,12 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.github.qixiaoo.crystallite.common.DEFAULT_LANGUAGE
 import io.github.qixiaoo.crystallite.common.Result
 import io.github.qixiaoo.crystallite.common.asResult
 import io.github.qixiaoo.crystallite.data.model.ChapterDetail
 import io.github.qixiaoo.crystallite.data.model.ComicDetail
 import io.github.qixiaoo.crystallite.data.network.ComickRepository
-import io.github.qixiaoo.crystallite.common.DEFAULT_LANGUAGE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -70,6 +70,7 @@ private fun comicUiState(slug: String, comickRepository: ComickRepository): Flow
 private fun chaptersUiState(
     hid: String, language: String, scope: CoroutineScope, comickRepository: ComickRepository
 ): Flow<PagingData<ChapterDetail>> {
+    Log.v(::chaptersUiState.name, "fetch comic chapters: $hid")
     return comickRepository.chapters(hid = hid, language = language).cachedIn(scope)
 }
 

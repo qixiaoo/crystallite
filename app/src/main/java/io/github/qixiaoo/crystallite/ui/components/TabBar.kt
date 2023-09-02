@@ -70,7 +70,7 @@ fun TabBar(
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun TabBarPreview() {
     CrystalliteTheme {
         TabBar()
     }

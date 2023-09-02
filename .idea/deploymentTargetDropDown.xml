@@ -2,6 +2,15 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="PageNavigatorPreview">
+        <State />
+      </entry>
+      <entry key="ReadingChapterPreview">
+        <State />
+      </entry>
+      <entry key="SinglePageReaderPreview">
+        <State />
+      </entry>
       <entry key="app">
         <State />
       </entry>

@@ -16,4 +16,6 @@ class ComickNetwork @Inject constructor() : ComickNetworkDataSource {
 
     override suspend fun chapters(hid: String, language: String?, page: Int?) =
         comickNetworkApi.chapters(hid, language, page)
+
+    override suspend fun chapter(hid: String) = comickNetworkApi.chapter(hid)
 }

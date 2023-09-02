@@ -20,6 +20,8 @@ import io.github.qixiaoo.crystallite.ui.screens.comic.comic
 import io.github.qixiaoo.crystallite.ui.screens.comic.navigateToComic
 import io.github.qixiaoo.crystallite.ui.screens.home.home
 import io.github.qixiaoo.crystallite.ui.screens.me.me
+import io.github.qixiaoo.crystallite.ui.screens.reader.navigateToReader
+import io.github.qixiaoo.crystallite.ui.screens.reader.reader
 import io.github.qixiaoo.crystallite.ui.theme.CrystalliteTheme
 
 @Composable
@@ -63,7 +65,8 @@ fun Main() {
                     home(onComicClick = navController::navigateToComic)
                     bookshelf()
                     me()
-                    comic()
+                    comic(onChapterClick = navController::navigateToReader)
+                    reader()
                 }
             }
         }

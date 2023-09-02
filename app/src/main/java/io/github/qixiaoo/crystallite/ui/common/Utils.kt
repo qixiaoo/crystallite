@@ -10,14 +10,26 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import io.github.qixiaoo.crystallite.data.model.Comic
 import io.github.qixiaoo.crystallite.R
 import io.github.qixiaoo.crystallite.common.PICTURES_SITE
+import io.github.qixiaoo.crystallite.data.model.Comic
 import io.github.qixiaoo.crystallite.data.model.MdCover
 import io.github.qixiaoo.crystallite.data.model.ProgressStatus
 
-fun Float.px2dp(context: Context): Dp {
-    return Dp(this / context.resources.displayMetrics.density)
+fun Float.pxToDp(context: Context): Float {
+    return this / context.resources.displayMetrics.density
+}
+
+fun Float.dpToPx(context: Context): Float {
+    return this * context.resources.displayMetrics.density
+}
+
+fun Int.pxToDp(context: Context): Float {
+    return this / context.resources.displayMetrics.density
+}
+
+fun Int.dpToPx(context: Context): Float {
+    return this * context.resources.displayMetrics.density
 }
 
 fun Modifier.shadow(
