@@ -12,8 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import io.github.qixiaoo.crystallite.ui.common.APP_BAR_SCREEN_ROUTE_LIST
 import io.github.qixiaoo.crystallite.ui.common.BOTTOM_BAR_SCREEN_ROUTE_LIST
 import io.github.qixiaoo.crystallite.ui.common.Route
+import io.github.qixiaoo.crystallite.ui.components.AppBar
 import io.github.qixiaoo.crystallite.ui.components.TabBar
 import io.github.qixiaoo.crystallite.ui.screens.bookshelf.bookshelf
 import io.github.qixiaoo.crystallite.ui.screens.comic.comic
@@ -22,10 +24,12 @@ import io.github.qixiaoo.crystallite.ui.screens.home.home
 import io.github.qixiaoo.crystallite.ui.screens.me.me
 import io.github.qixiaoo.crystallite.ui.screens.reader.navigateToReader
 import io.github.qixiaoo.crystallite.ui.screens.reader.reader
+import io.github.qixiaoo.crystallite.ui.screens.search.navigateSearch
+import io.github.qixiaoo.crystallite.ui.screens.search.search
 import io.github.qixiaoo.crystallite.ui.theme.CrystalliteTheme
 
-@Composable
 @OptIn(ExperimentalMaterial3Api::class)
+@Composable
 fun Main() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -37,6 +41,13 @@ fun Main() {
             modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
         ) {
             Scaffold(
+                topBar = {
+                    if (!APP_BAR_SCREEN_ROUTE_LIST.contains(currRoute)) {
+                        return@Scaffold
+                    }
+
+                    AppBar(onClickSearch = navController::navigateSearch)
+                },
                 bottomBar = {
                     if (!BOTTOM_BAR_SCREEN_ROUTE_LIST.contains(currRoute)) {
                         return@Scaffold
@@ -67,6 +78,7 @@ fun Main() {
                     me()
                     comic(onChapterClick = navController::navigateToReader)
                     reader()
+                    search(onComicClick = navController::navigateToComic)
                 }
             }
         }

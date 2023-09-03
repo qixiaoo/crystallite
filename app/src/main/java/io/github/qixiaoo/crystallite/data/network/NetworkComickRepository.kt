@@ -7,6 +7,8 @@ import io.github.qixiaoo.crystallite.data.model.ComicChapters
 import io.github.qixiaoo.crystallite.data.model.ComicDetail
 import io.github.qixiaoo.crystallite.data.model.Gender
 import io.github.qixiaoo.crystallite.data.model.ReadingChapter
+import io.github.qixiaoo.crystallite.data.model.SearchResultAuthor
+import io.github.qixiaoo.crystallite.data.model.SearchResultComic
 import io.github.qixiaoo.crystallite.data.model.TopComics
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -47,6 +49,20 @@ class NetworkComickRepository @Inject constructor(private val network: ComickNet
     override fun chapter(hid: String): Flow<ReadingChapter> {
         return flow {
             val response = network.chapter(hid)
+            emit(response)
+        }
+    }
+
+    override fun searchComicByKeyword(keyword: String): Flow<List<SearchResultComic>> {
+        return flow {
+            val response = network.searchComicByKeyword(keyword)
+            emit(response)
+        }
+    }
+
+    override fun searchAuthorByKeyword(keyword: String): Flow<List<SearchResultAuthor>> {
+        return flow {
+            val response = network.searchAuthorByKeyword(keyword)
             emit(response)
         }
     }

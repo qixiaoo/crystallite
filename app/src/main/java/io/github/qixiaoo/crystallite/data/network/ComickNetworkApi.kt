@@ -1,10 +1,12 @@
 package io.github.qixiaoo.crystallite.data.network
 
 import io.github.qixiaoo.crystallite.common.DEFAULT_CHAPTER_PAGE_SIZE
-import io.github.qixiaoo.crystallite.data.model.ReadingChapter
 import io.github.qixiaoo.crystallite.data.model.ComicChapters
 import io.github.qixiaoo.crystallite.data.model.ComicDetail
 import io.github.qixiaoo.crystallite.data.model.Gender
+import io.github.qixiaoo.crystallite.data.model.ReadingChapter
+import io.github.qixiaoo.crystallite.data.model.SearchResultAuthor
+import io.github.qixiaoo.crystallite.data.model.SearchResultComic
 import io.github.qixiaoo.crystallite.data.model.TopComics
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -14,7 +16,7 @@ interface ComickNetworkApi {
     @GET("top")
     suspend fun top(
         @Query("gender") gender: Gender,
-        @Query("accept_mature_content") isMature: Boolean = false
+        @Query("accept_mature_content") isMature: Boolean = false,
     ): TopComics
 
     @GET("comic/{slug}")
@@ -25,7 +27,7 @@ interface ComickNetworkApi {
         @Path("hid") hid: String,
         @Query("lang") language: String? = null,
         @Query("page") page: Int? = null,
-        @Query("limit") pageSize: Int? = DEFAULT_CHAPTER_PAGE_SIZE
+        @Query("limit") pageSize: Int? = DEFAULT_CHAPTER_PAGE_SIZE,
     ): ComicChapters
 
     @GET("chapter/{hid}")
@@ -33,4 +35,20 @@ interface ComickNetworkApi {
         @Path("hid") hid: String,
         @Query("tachiyomi") tachiyomi: Boolean = true,
     ): ReadingChapter
+
+    @GET("v1.0/search")
+    suspend fun searchComicByKeyword(
+        @Query("q") keyword: String,
+        @Query("type") type: String = "comic",
+        @Query("t") includeAltTitle: Boolean = true,
+        @Query("tachiyomi") tachiyomi: Boolean = true,
+    ): List<SearchResultComic>
+
+    @GET("v1.0/search")
+    suspend fun searchAuthorByKeyword(
+        @Query("q") keyword: String,
+        @Query("type") type: String = "author",
+        @Query("t") includeAltTitle: Boolean = true,
+        @Query("tachiyomi") tachiyomi: Boolean = true,
+    ): List<SearchResultAuthor>
 }
