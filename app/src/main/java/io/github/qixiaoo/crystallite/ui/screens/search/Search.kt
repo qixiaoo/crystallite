@@ -156,7 +156,7 @@ private fun ComicTabContent(
                     key = { _, it -> it.id }) { index, comic ->
                     Comic(
                         comic = comic,
-                        isLast = index == comicList.size - 1,
+                        isLast = index == comicList.lastIndex,
                         onClick = onComicClick
                     )
                 }

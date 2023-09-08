@@ -15,6 +15,7 @@ import io.github.qixiaoo.crystallite.common.PICTURES_SITE
 import io.github.qixiaoo.crystallite.data.model.Comic
 import io.github.qixiaoo.crystallite.data.model.MdCover
 import io.github.qixiaoo.crystallite.data.model.ProgressStatus
+import kotlin.math.PI
 
 fun Float.pxToDp(context: Context): Float {
     return this / context.resources.displayMetrics.density
@@ -79,4 +80,8 @@ fun ProgressStatus.toResourceId(): Int {
         ProgressStatus.CANCELLED -> R.string.cancelled
         ProgressStatus.HIATUS -> R.string.hiatus
     }
+}
+
+fun radToDeg(rad: Double): Double {
+    return rad / PI * 180
 }

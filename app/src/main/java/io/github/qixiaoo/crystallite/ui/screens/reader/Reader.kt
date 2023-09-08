@@ -1,21 +1,23 @@
 package io.github.qixiaoo.crystallite.ui.screens.reader
 
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
@@ -23,9 +25,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.qixiaoo.crystallite.ui.components.ErrorMessage
 import io.github.qixiaoo.crystallite.ui.components.reader.PageNavigator
+import io.github.qixiaoo.crystallite.ui.components.reader.ReadingMode
 import io.github.qixiaoo.crystallite.ui.components.reader.SinglePageReader
 import io.github.qixiaoo.crystallite.ui.theme.CrystalliteTheme
-import kotlinx.coroutines.launch
 
 
 @Composable
@@ -44,30 +46,33 @@ internal fun Reader(readerViewModel: ReaderViewModel = hiltViewModel()) {
 }
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ReadingChapter(imageList: List<String>) {
-    val coroutineScope = rememberCoroutineScope()
-    val singlePageState = rememberPagerState(initialPage = 0) { imageList.size }
-
+    var current by rememberSaveable { mutableIntStateOf(0) }
     var isPageNavigatorVisible by remember { mutableStateOf(false) }
 
-    SinglePageReader(
-        pagerState = singlePageState,
-        imageList = imageList,
-        onClick = { isPageNavigatorVisible = !isPageNavigatorVisible }
-    )
+    val readingMode = ReadingMode.RightToLeft
 
-    ReadingChapterHud(
-        current = singlePageState.currentPage,
-        pageCount = imageList.size,
-        onPageChange = {
-            coroutineScope.launch {
-                singlePageState.scrollToPage(it)
-            }
-        },
-        isPageNavigatorVisible = isPageNavigatorVisible
-    )
+    val direction = when (readingMode) {
+        ReadingMode.LeftToRight -> LayoutDirection.Ltr
+        ReadingMode.RightToLeft -> LayoutDirection.Rtl
+    }
+
+    CompositionLocalProvider(LocalLayoutDirection provides direction) {
+        SinglePageReader(
+            current = current,
+            imageList = imageList,
+            onClick = { isPageNavigatorVisible = !isPageNavigatorVisible },
+            onPageChange = { current = it }
+        )
+
+        ReadingChapterHud(
+            current = current,
+            pageCount = imageList.size,
+            onPageChange = { current = it },
+            isPageNavigatorVisible = isPageNavigatorVisible
+        )
+    }
 }
 
 

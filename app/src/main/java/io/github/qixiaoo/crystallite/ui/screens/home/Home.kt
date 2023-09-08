@@ -129,7 +129,7 @@ private fun HomeContent(
         }
 
         itemsIndexed(items = completions) { index, comics ->
-            val gridRowBottomPadding = if (index == completions.size - 1) spaceBetween else 0.dp
+            val gridRowBottomPadding = if (index == completions.lastIndex) spaceBetween else 0.dp
 
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,

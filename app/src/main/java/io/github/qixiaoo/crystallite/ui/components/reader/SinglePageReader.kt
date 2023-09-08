@@ -1,12 +1,8 @@
 package io.github.qixiaoo.crystallite.ui.components.reader
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
@@ -21,47 +17,41 @@ import io.github.qixiaoo.crystallite.ui.theme.CrystalliteTheme
 import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SinglePageReader(
     modifier: Modifier = Modifier,
+    current: Int = 0,
     imageList: List<String>,
-    pagerState: PagerState = rememberPagerState(initialPage = 0) { imageList.size },
-    readingMode: ReadingMode = ReadingMode.LeftToRight,
-    onClick: (() -> Unit)? = null,
+    onClick: () -> Unit = {},
+    onPageChange: (Int) -> Unit = {},
 ) {
     val screenWidthDp = LocalConfiguration.current.screenWidthDp
     val screenHeightDp = LocalConfiguration.current.screenHeightDp
 
-    val direction = when (readingMode) {
-        ReadingMode.LeftToRight -> LayoutDirection.Ltr
-        ReadingMode.RightToLeft -> LayoutDirection.Rtl
-    }
-
-    CompositionLocalProvider(LocalLayoutDirection provides direction) {
-        HorizontalPager(
-            state = pagerState,
-            beyondBoundsPageCount = 1,
-            modifier = modifier
-        ) { page ->
-            val imageUrl = imageList.getOrNull(page) ?: ""
-
+    HorizontalPager(
+        modifier = modifier,
+        currentPage = current,
+        pageCount = imageList.size,
+        onClick = onClick,
+        onPageChange = onPageChange,
+        pageKey = { imageList[it] }
+    ) {
+        // reset direction to LayoutDirection.Ltr to prevent zoomed image position error
+        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
             ZoomableAsyncImage(
-                model = imageUrl,
-                contentDescription = "page ${page + 1}",
+                model = imageList[it],
+                contentDescription = "",
                 contentScale = ContentScale.Fit,
-                onClick = { onClick?.invoke() },
                 modifier = Modifier
                     .background(Color.Black)
                     .width(screenWidthDp.dp)
-                    .height(screenHeightDp.dp)
+                    .height(screenHeightDp.dp),
             )
         }
     }
 }
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @Preview(showBackground = true)
 @Composable
 fun SinglePageReaderPreview() {
