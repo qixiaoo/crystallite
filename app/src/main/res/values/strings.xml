@@ -35,6 +35,7 @@
     <string name="comic">Comic</string>
     <string name="author">Author</string>
 
-    <string name="empty">Empty.</string>
-    <string name="not_implemented">Not implemented.</string>
+    <string name="empty">Empty</string>
+    <string name="not_implemented">Not implemented</string>
+    <string name="failed_to_load">Failed to load</string>
 </resources>

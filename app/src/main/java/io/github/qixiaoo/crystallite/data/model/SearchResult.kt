@@ -8,7 +8,7 @@ data class SearchResultComic(
     val slug: String,
     val title: String,
     val genres: List<Int>,
-    val status: ProgressStatus,
+    val status: ProgressStatus?,
     val rating: String?,
     @SerializedName("desc") val description: String?,
     @SerializedName("content_rating") val contentRating: ContentRating,

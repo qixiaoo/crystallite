@@ -212,10 +212,12 @@ private fun Comic(
 
                 comic.rating?.let { Text(text = it, style = typography.bodyMedium) }
 
-                Text(
-                    text = stringResource(id = comic.status.toResourceId()),
-                    style = typography.bodyMedium
-                )
+                comic.status?.let {
+                    Text(
+                        text = stringResource(id = it.toResourceId()),
+                        style = typography.bodyMedium
+                    )
+                }
 
                 comic.description?.let {
                     Text(
