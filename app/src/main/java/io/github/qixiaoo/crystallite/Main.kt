@@ -2,13 +2,14 @@ package io.github.qixiaoo.crystallite
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -24,16 +25,23 @@ import io.github.qixiaoo.crystallite.ui.screens.home.home
 import io.github.qixiaoo.crystallite.ui.screens.me.me
 import io.github.qixiaoo.crystallite.ui.screens.reader.navigateToReader
 import io.github.qixiaoo.crystallite.ui.screens.reader.reader
+import io.github.qixiaoo.crystallite.ui.screens.search.SearchViewModel
 import io.github.qixiaoo.crystallite.ui.screens.search.navigateSearch
 import io.github.qixiaoo.crystallite.ui.screens.search.search
 import io.github.qixiaoo.crystallite.ui.theme.CrystalliteTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Main() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currRoute = navBackStackEntry?.destination?.route
+
+    val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
+        "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
+    }
+
+    // `AppBar` and `Search` should share the same `SearchViewModel`
+    val searchViewModel = hiltViewModel<SearchViewModel>(viewModelStoreOwner)
 
     CrystalliteTheme {
         // A surface container using the 'background' color from the theme
@@ -46,7 +54,17 @@ fun Main() {
                         return@Scaffold
                     }
 
-                    AppBar(onClickSearch = navController::navigateSearch)
+                    AppBar(
+                        onClickBack = navController::popBackStack,
+                        onClickSearch = {
+                            if (currRoute.equals(Route.Search.route)) {
+                                return@AppBar
+                            }
+
+                            navController.navigateSearch()
+                        },
+                        searchViewModel = searchViewModel
+                    )
                 },
                 bottomBar = {
                     if (!BOTTOM_BAR_SCREEN_ROUTE_LIST.contains(currRoute)) {
@@ -78,7 +96,10 @@ fun Main() {
                     me()
                     comic(onChapterClick = navController::navigateToReader)
                     reader()
-                    search(onComicClick = navController::navigateToComic)
+                    search(
+                        onComicClick = navController::navigateToComic,
+                        searchViewModel = searchViewModel
+                    )
                 }
             }
         }

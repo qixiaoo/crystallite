@@ -38,4 +38,6 @@
     <string name="empty">Empty</string>
     <string name="not_implemented">Not implemented</string>
     <string name="failed_to_load">Failed to load</string>
+
+    <string name="search">Search</string>
 </resources>

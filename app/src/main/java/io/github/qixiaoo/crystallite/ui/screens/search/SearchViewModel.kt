@@ -26,7 +26,7 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class SearchViewModel @Inject constructor(val comickRepository: ComickRepository) : ViewModel() {
+class SearchViewModel @Inject constructor(comickRepository: ComickRepository) : ViewModel() {
     var type = MutableStateFlow(SearchResultType.COMIC)
 
     var keyword = MutableStateFlow("")
@@ -37,6 +37,10 @@ class SearchViewModel @Inject constructor(val comickRepository: ComickRepository
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = ComicListUiState.Loading
         )
+
+    fun setKeyword(value: String) {
+        keyword.value = value
+    }
 }
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)

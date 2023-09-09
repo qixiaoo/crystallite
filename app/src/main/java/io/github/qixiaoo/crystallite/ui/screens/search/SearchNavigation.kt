@@ -6,9 +6,9 @@ import androidx.navigation.compose.composable
 import io.github.qixiaoo.crystallite.ui.common.Route
 
 
-fun NavGraphBuilder.search(onComicClick: (slug: String) -> Unit) {
+fun NavGraphBuilder.search(onComicClick: (slug: String) -> Unit, searchViewModel: SearchViewModel) {
     composable(Route.Search.route) {
-        Search(onComicClick = onComicClick)
+        Search(onComicClick = onComicClick, searchViewModel = searchViewModel)
     }
 }
 

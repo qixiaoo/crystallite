@@ -10,7 +10,7 @@ const val ComicPath = "comic/{$slugArg}"
 const val ReaderPath = "reader/{$chapterHidArg}"
 const val SearchPath = "search"
 
-val APP_BAR_SCREEN_ROUTE_LIST = listOf(HomePath)
+val APP_BAR_SCREEN_ROUTE_LIST = listOf(HomePath, SearchPath)
 val BOTTOM_BAR_SCREEN_ROUTE_LIST = listOf(HomePath, BookshelfPath, MePath)
 
 sealed class Route(val route: String) {
