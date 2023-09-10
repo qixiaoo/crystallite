@@ -4,8 +4,8 @@ import com.google.gson.annotations.SerializedName
 
 data class ReadingChapter(
     var chapter: ReadingChapterDetail,
-    val next: ChapterToBeRead,
-    val prev: ChapterToBeRead,
+    val next: ChapterToBeRead?,
+    val prev: ChapterToBeRead?,
 )
 
 data class ReadingChapterDetail(

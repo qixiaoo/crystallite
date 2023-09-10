@@ -8,15 +8,12 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -27,7 +24,6 @@ import io.github.qixiaoo.crystallite.ui.components.ErrorMessage
 import io.github.qixiaoo.crystallite.ui.components.reader.PageNavigator
 import io.github.qixiaoo.crystallite.ui.components.reader.ReadingMode
 import io.github.qixiaoo.crystallite.ui.components.reader.SinglePageReader
-import io.github.qixiaoo.crystallite.ui.theme.CrystalliteTheme
 
 
 @Composable
@@ -38,19 +34,18 @@ internal fun Reader(readerViewModel: ReaderViewModel = hiltViewModel()) {
         is ChapterUiState.Error -> ErrorMessage(message = (chapterState as ChapterUiState.Error).message)
         is ChapterUiState.Loading -> LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
         is ChapterUiState.Success -> {
-            val readingChapter = (chapterState as ChapterUiState.Success).chapter
-            val imageList = readingChapter.chapter.images.map { it.url }
-            ReadingChapter(imageList = imageList)
+            ReadingChapter(readerViewModel = readerViewModel)
         }
     }
 }
 
 
 @Composable
-private fun ReadingChapter(imageList: List<String>) {
-    var current by rememberSaveable { mutableIntStateOf(0) }
+private fun ReadingChapter(readerViewModel: ReaderViewModel) {
+    val current = readerViewModel.current.collectAsStateWithLifecycle()
     var isPageNavigatorVisible by remember { mutableStateOf(false) }
 
+    val imageList = readerViewModel.imageList
     val readingMode = ReadingMode.RightToLeft
 
     val direction = when (readingMode) {
@@ -60,17 +55,21 @@ private fun ReadingChapter(imageList: List<String>) {
 
     CompositionLocalProvider(LocalLayoutDirection provides direction) {
         SinglePageReader(
-            current = current,
+            current = current.value,
             imageList = imageList,
             onClick = { isPageNavigatorVisible = !isPageNavigatorVisible },
-            onPageChange = { current = it }
+            onPageChange = readerViewModel::setCurrent
         )
 
         ReadingChapterHud(
-            current = current,
+            current = current.value,
             pageCount = imageList.size,
-            onPageChange = { current = it },
-            isPageNavigatorVisible = isPageNavigatorVisible
+            onPageChange = readerViewModel::setCurrent,
+            isPageNavigatorVisible = isPageNavigatorVisible,
+            enablePreviousChapter = readerViewModel.isPrevChapterEnabled,
+            enableNextChapter = readerViewModel.isNextChapterEnabled,
+            onNavigateToPrevChapter = readerViewModel::navigateToPrevChapter,
+            onNavigateToNextChapter = readerViewModel::navigateToNextChapter
         )
     }
 }
@@ -82,6 +81,10 @@ private fun ReadingChapterHud(
     pageCount: Int,
     onPageChange: (Int) -> Unit,
     isPageNavigatorVisible: Boolean,
+    enablePreviousChapter: Boolean = true,
+    enableNextChapter: Boolean = true,
+    onNavigateToPrevChapter: () -> Unit = {},
+    onNavigateToNextChapter: () -> Unit = {},
 ) {
     val pageNavigatorPadding = 10.dp
 
@@ -106,22 +109,11 @@ private fun ReadingChapterHud(
             pageCount = pageCount,
             onPageChange = onPageChange,
             margin = PaddingValues(horizontal = 10.dp),
+            enablePreviousChapter = enablePreviousChapter,
+            enableNextChapter = enableNextChapter,
+            onNavigateToPrevChapter = onNavigateToPrevChapter,
+            onNavigateToNextChapter = onNavigateToNextChapter,
             modifier = Modifier.layoutId(pageNavigatorId)
-        )
-    }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun ReadingChapterPreview() {
-    CrystalliteTheme {
-        ReadingChapter(
-            imageList = listOf(
-                "https://meo.comick.pictures/1-uBH4-P_O1_f7S.jpg",
-                "https://meo.comick.pictures/2-IeaFh4XcsBWFY.png",
-                "https://meo.comick.pictures/3-w-7AxbLtPTgqR.png",
-            )
         )
     }
 }
