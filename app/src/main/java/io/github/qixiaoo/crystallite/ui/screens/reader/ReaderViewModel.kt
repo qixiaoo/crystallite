@@ -1,6 +1,7 @@
 package io.github.qixiaoo.crystallite.ui.screens.reader
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,66 +28,38 @@ class ReaderViewModel @Inject constructor(
 
     private val chapterHid = MutableStateFlow(readerArgs.chapterHid)
 
-    val chapterUiState = MutableStateFlow<ChapterUiState>(ChapterUiState.Loading)
+    val readerUiState = MutableStateFlow<ReaderUiState>(ReaderUiState.Loading)
 
-    var current = MutableStateFlow(0)
-
-    val chapter: (ReadingChapter?)
-        get() {
-            return (chapterUiState.value as? ChapterUiState.Success)?.chapter
+    init {
+        viewModelScope.launch {
+            chapterUiState(chapterHid = chapterHid, comickRepository = comickRepository).collect {
+                readerUiState.emit(it)
+            }
         }
-
-    val imageList: List<String>
-        get() {
-            return chapter?.chapter?.images?.map { it.url } ?: emptyList()
-        }
-
-    val isPrevChapterEnabled: Boolean
-        get() {
-            return chapter?.prev?.hid?.isNotEmpty() != null
-        }
-
-    val isNextChapterEnabled: Boolean
-        get() {
-            return chapter?.next?.hid?.isNotEmpty() != null
-        }
-
-    fun setCurrent(value: Int) {
-        current.value = value
     }
 
     fun navigateToPrevChapter() {
         viewModelScope.launch {
-            if (chapter == null) {
+            if (readerUiState.value !is ReaderUiState.Success) {
                 return@launch
             }
-            val readingChapter = chapter
-            if (readingChapter?.prev?.hid?.isNotEmpty() == true) {
-                chapterUiState.emit(ChapterUiState.Loading)
-                chapterHid.emit(readingChapter.prev.hid)
-                setCurrent(0)
+            val uiState = (readerUiState.value as ReaderUiState.Success)
+            if (uiState.isPrevChapterEnabled) {
+                readerUiState.emit(ReaderUiState.Loading)
+                uiState.readingChapter.prev?.let { chapterHid.emit(it.hid) }
             }
         }
     }
 
     fun navigateToNextChapter() {
         viewModelScope.launch {
-            if (chapter == null) {
+            if (readerUiState.value !is ReaderUiState.Success) {
                 return@launch
             }
-            val readingChapter = chapter
-            if (readingChapter?.next?.hid?.isNotEmpty() == true) {
-                chapterUiState.emit(ChapterUiState.Loading)
-                chapterHid.emit(readingChapter.next.hid)
-                setCurrent(0)
-            }
-        }
-    }
-
-    init {
-        viewModelScope.launch {
-            chapterUiState(chapterHid = chapterHid, comickRepository = comickRepository).collect {
-                chapterUiState.emit(it)
+            val uiState = (readerUiState.value as ReaderUiState.Success)
+            if (uiState.isNextChapterEnabled) {
+                readerUiState.emit(ReaderUiState.Loading)
+                uiState.readingChapter.next?.let { chapterHid.emit(it.hid) }
             }
         }
     }
@@ -96,22 +69,47 @@ class ReaderViewModel @Inject constructor(
 private fun chapterUiState(
     chapterHid: MutableStateFlow<String>,
     comickRepository: ComickRepository,
-): Flow<ChapterUiState> {
+): Flow<ReaderUiState> {
     val chapterSteam = chapterHid.flatMapLatest {
         Log.v(::chapterUiState.name, "fetch reading chapter: $it")
         comickRepository.chapter(it)
     }
     return chapterSteam.asResult().map { result ->
         when (result) {
-            is Result.Error -> ChapterUiState.Error(result.exception?.message)
-            is Result.Loading -> ChapterUiState.Loading
-            is Result.Success -> ChapterUiState.Success(chapter = result.data)
+            is Result.Error -> ReaderUiState.Error(result.exception?.message)
+            is Result.Loading -> ReaderUiState.Loading
+            is Result.Success -> ReaderUiState.Success(readingChapter = result.data)
         }
     }
 }
 
-sealed interface ChapterUiState {
-    data class Success(val chapter: ReadingChapter) : ChapterUiState
-    data class Error(val message: String? = null) : ChapterUiState
-    object Loading : ChapterUiState
+sealed interface ReaderUiState {
+    object Loading : ReaderUiState
+
+    data class Error(val message: String? = null) : ReaderUiState
+
+    data class Success(val readingChapter: ReadingChapter) : ReaderUiState {
+        var currentPage = MutableStateFlow(0)
+
+        var isHudVisible = mutableStateOf(false)
+
+        val imageList: List<String>
+            get() {
+                return readingChapter.chapter.images.map { it.url }
+            }
+
+        val isPrevChapterEnabled: Boolean
+            get() {
+                return readingChapter.prev?.hid?.isNotEmpty() != null
+            }
+
+        val isNextChapterEnabled: Boolean
+            get() {
+                return readingChapter.next?.hid?.isNotEmpty() != null
+            }
+
+        fun setCurrentPage(value: Int) {
+            currentPage.value = value
+        }
+    }
 }

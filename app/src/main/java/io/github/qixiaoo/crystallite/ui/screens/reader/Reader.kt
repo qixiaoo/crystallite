@@ -8,7 +8,6 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -28,24 +27,27 @@ import io.github.qixiaoo.crystallite.ui.components.reader.SinglePageReader
 
 @Composable
 internal fun Reader(readerViewModel: ReaderViewModel = hiltViewModel()) {
-    val chapterState by readerViewModel.chapterUiState.collectAsStateWithLifecycle()
+    val readerUiState by readerViewModel.readerUiState.collectAsStateWithLifecycle()
 
-    when (chapterState) {
-        is ChapterUiState.Error -> ErrorMessage(message = (chapterState as ChapterUiState.Error).message)
-        is ChapterUiState.Loading -> LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-        is ChapterUiState.Success -> {
-            ReadingChapter(readerViewModel = readerViewModel)
+    when (readerUiState) {
+        is ReaderUiState.Error -> ErrorMessage(message = (readerUiState as ReaderUiState.Error).message)
+        is ReaderUiState.Loading -> LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+        is ReaderUiState.Success -> {
+            ReaderContent(
+                readerUiState = readerUiState as ReaderUiState.Success,
+                readerViewModel = readerViewModel
+            )
         }
     }
 }
 
 
 @Composable
-private fun ReadingChapter(readerViewModel: ReaderViewModel) {
-    val current = readerViewModel.current.collectAsStateWithLifecycle()
-    var isPageNavigatorVisible by remember { mutableStateOf(false) }
+private fun ReaderContent(readerUiState: ReaderUiState.Success, readerViewModel: ReaderViewModel) {
+    val current = readerUiState.currentPage.collectAsStateWithLifecycle()
+    var isHudVisible by remember { readerUiState.isHudVisible }
 
-    val imageList = readerViewModel.imageList
+    val imageList = readerUiState.imageList
     val readingMode = ReadingMode.RightToLeft
 
     val direction = when (readingMode) {
@@ -57,17 +59,17 @@ private fun ReadingChapter(readerViewModel: ReaderViewModel) {
         SinglePageReader(
             current = current.value,
             imageList = imageList,
-            onClick = { isPageNavigatorVisible = !isPageNavigatorVisible },
-            onPageChange = readerViewModel::setCurrent
+            onClick = { isHudVisible = !isHudVisible },
+            onPageChange = { readerUiState.setCurrentPage(it) }
         )
 
-        ReadingChapterHud(
+        ReaderHud(
             current = current.value,
             pageCount = imageList.size,
-            onPageChange = readerViewModel::setCurrent,
-            isPageNavigatorVisible = isPageNavigatorVisible,
-            enablePreviousChapter = readerViewModel.isPrevChapterEnabled,
-            enableNextChapter = readerViewModel.isNextChapterEnabled,
+            onPageChange = { readerUiState.setCurrentPage(it) },
+            isPageNavigatorVisible = isHudVisible,
+            enablePreviousChapter = readerUiState.isPrevChapterEnabled,
+            enableNextChapter = readerUiState.isNextChapterEnabled,
             onNavigateToPrevChapter = readerViewModel::navigateToPrevChapter,
             onNavigateToNextChapter = readerViewModel::navigateToNextChapter
         )
@@ -76,7 +78,7 @@ private fun ReadingChapter(readerViewModel: ReaderViewModel) {
 
 
 @Composable
-private fun ReadingChapterHud(
+private fun ReaderHud(
     current: Int,
     pageCount: Int,
     onPageChange: (Int) -> Unit,
