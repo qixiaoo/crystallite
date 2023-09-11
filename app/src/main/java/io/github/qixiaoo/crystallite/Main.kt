@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -42,6 +43,7 @@ fun Main() {
 
     // `AppBar` and `Search` should share the same `SearchViewModel`
     val searchViewModel = hiltViewModel<SearchViewModel>(viewModelStoreOwner)
+    val searchViewModelKeyword = searchViewModel.keyword.collectAsStateWithLifecycle()
 
     CrystalliteTheme {
         // A surface container using the 'background' color from the theme
@@ -55,6 +57,8 @@ fun Main() {
                     }
 
                     AppBar(
+                        keyword = searchViewModelKeyword.value,
+                        onKeywordChange = searchViewModel::setKeyword,
                         onClickBack = navController::popBackStack,
                         onClickSearch = {
                             if (currRoute.equals(Route.Search.route)) {
@@ -63,7 +67,6 @@ fun Main() {
 
                             navController.navigateSearch()
                         },
-                        searchViewModel = searchViewModel
                     )
                 },
                 bottomBar = {

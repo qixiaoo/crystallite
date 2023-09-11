@@ -20,10 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.qixiaoo.crystallite.R
-import io.github.qixiaoo.crystallite.ui.screens.search.SearchViewModel
 import io.github.qixiaoo.crystallite.ui.theme.CrystalliteTheme
 
 
@@ -31,20 +28,20 @@ import io.github.qixiaoo.crystallite.ui.theme.CrystalliteTheme
 @Composable
 fun AppBar(
     modifier: Modifier = Modifier,
+    keyword: String = "",
+    onKeywordChange: (String) -> Unit = {},
     onClickSearch: () -> Unit = {},
     onClickBack: () -> Unit = {},
-    searchViewModel: SearchViewModel = hiltViewModel(),
 ) {
     var active by rememberSaveable { mutableStateOf(false) }
-    val keyword = searchViewModel.keyword.collectAsStateWithLifecycle()
-    
+
     SearchBar(
         modifier = Modifier
             .padding(bottom = 8.dp)
             .fillMaxWidth()
             .then(modifier),
-        query = keyword.value,
-        onQueryChange = { searchViewModel.setKeyword(it) },
+        query = keyword,
+        onQueryChange = { onKeywordChange(it) },
         onSearch = {
             active = false
             onClickSearch()
@@ -68,8 +65,8 @@ fun AppBar(
             }
         },
         trailingIcon = {
-            if (keyword.value.isNotEmpty()) {
-                IconButton(onClick = { searchViewModel.setKeyword("") }) {
+            if (keyword.isNotEmpty()) {
+                IconButton(onClick = { onKeywordChange("") }) {
                     Icon(
                         Icons.Default.Cancel,
                         contentDescription = "cancel",
