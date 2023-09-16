@@ -1,6 +1,5 @@
 package io.github.qixiaoo.crystallite.ui.components.reader
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +15,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltipBox
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -50,86 +51,95 @@ fun PageNavigator(
     onNavigateToNextChapter: () -> Unit = {},
 ) {
     val typography = MaterialTheme.typography
-    val colorScheme = MaterialTheme.colorScheme
 
     val steps = if (pageCount > 2) pageCount - 2 else 0
     val pageRange = 0f..(pageCount - 1).toFloat()
 
-    val backgroundModifier = remember {
-        Modifier.background(
-            color = colorScheme.primaryContainer.copy(alpha = 0.9f),
-            shape = RoundedCornerShape(50.dp)
-        )
-    }
+    val alpha = 0.9f
+    val tonalElevation = 6.dp
+    val shape = RoundedCornerShape(50.dp)
 
     val isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
     val prevChapterIcon = if (isLtr) Icons.Default.SkipPrevious else Icons.Default.SkipNext
     val nextChapterIcon = if (isLtr) Icons.Default.SkipNext else Icons.Default.SkipPrevious
 
-    val enabledIconColor = colorScheme.onPrimary
-    val disabledIconColor = colorScheme.onPrimary.copy(alpha = 0.5f)
-
     Row(modifier = modifier) {
         // previous chapter button
-        PlainTooltipBox(tooltip = { Text(stringResource(R.string.previous_chapter)) }) {
-            IconButton(
-                onClick = onNavigateToPrevChapter,
-                enabled = enablePreviousChapter,
-                modifier = Modifier
-                    .padding(horizontal = 5.dp)
-                    .tooltipAnchor()
-                    .then(backgroundModifier)
-            ) {
-                Icon(
-                    prevChapterIcon,
-                    contentDescription = "previous chapter",
-                    tint = if (enablePreviousChapter) enabledIconColor else disabledIconColor
-                )
+        Surface(
+            tonalElevation = tonalElevation,
+            shape = shape,
+            modifier = Modifier
+                .padding(horizontal = 5.dp)
+                .alpha(alpha)
+        ) {
+            PlainTooltipBox(tooltip = { Text(stringResource(R.string.previous_chapter)) }) {
+                IconButton(
+                    onClick = onNavigateToPrevChapter,
+                    enabled = enablePreviousChapter,
+                    modifier = Modifier.tooltipAnchor()
+                ) {
+                    Icon(
+                        prevChapterIcon,
+                        contentDescription = "previous chapter",
+                    )
+                }
             }
         }
 
         // reading progress slider
-        Row(
-            verticalAlignment = Alignment.CenterVertically, modifier = Modifier
-                .padding(margin)
-                .then(backgroundModifier)
-                .padding(horizontal = 15.dp)
+        Surface(
+            tonalElevation = tonalElevation,
+            shape = shape,
+            modifier = Modifier
                 .weight(1f)
+                .alpha(alpha)
         ) {
-            Text(text = "1", color = colorScheme.onPrimary, style = typography.bodyMedium)
-            Spacer(modifier = Modifier.width(8.dp))
-            Slider(
-                steps = steps,
-                value = current.toFloat(),
-                valueRange = pageRange,
-                onValueChange = { onPageChange(it.roundToInt()) },
-                modifier = Modifier
-                    .weight(weight = 1f)
-                    .semantics { contentDescription = "Page Navigator Slider" }
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = pageCount.toString(),
-                color = colorScheme.onPrimary,
-                style = typography.bodyMedium
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                    .padding(margin)
+                    .padding(horizontal = 15.dp)
+            ) {
+                Text(
+                    text = (current + 1).toString(),
+                    style = typography.bodyMedium
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Slider(
+                    steps = steps,
+                    value = current.toFloat(),
+                    valueRange = pageRange,
+                    onValueChange = { onPageChange(it.roundToInt()) },
+                    modifier = Modifier
+                        .weight(weight = 1f)
+                        .semantics { contentDescription = "Page Navigator Slider" }
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = pageCount.toString(),
+                    style = typography.bodyMedium
+                )
+            }
         }
 
         // next chapter button
-        PlainTooltipBox(tooltip = { Text(stringResource(R.string.next_chapter)) }) {
-            IconButton(
-                onClick = onNavigateToNextChapter,
-                enabled = enableNextChapter,
-                modifier = Modifier
-                    .padding(horizontal = 5.dp)
-                    .tooltipAnchor()
-                    .then(backgroundModifier)
-            ) {
-                Icon(
-                    nextChapterIcon,
-                    contentDescription = "next chapter",
-                    tint = if (enableNextChapter) enabledIconColor else disabledIconColor
-                )
+        Surface(
+            tonalElevation = tonalElevation,
+            shape = shape,
+            modifier = Modifier
+                .padding(horizontal = 5.dp)
+                .alpha(alpha)
+        ) {
+            PlainTooltipBox(tooltip = { Text(stringResource(R.string.next_chapter)) }) {
+                IconButton(
+                    onClick = onNavigateToNextChapter,
+                    enabled = enableNextChapter,
+                    modifier = Modifier.tooltipAnchor()
+                ) {
+                    Icon(
+                        nextChapterIcon,
+                        contentDescription = "next chapter",
+                    )
+                }
             }
         }
     }

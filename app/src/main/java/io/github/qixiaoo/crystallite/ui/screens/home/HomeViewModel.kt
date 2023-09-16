@@ -10,7 +10,7 @@ import io.github.qixiaoo.crystallite.common.asResult
 import io.github.qixiaoo.crystallite.data.model.Comic
 import io.github.qixiaoo.crystallite.data.model.Gender
 import io.github.qixiaoo.crystallite.data.model.TopComics
-import io.github.qixiaoo.crystallite.data.network.ComickRepository
+import io.github.qixiaoo.crystallite.data.repository.ComickRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

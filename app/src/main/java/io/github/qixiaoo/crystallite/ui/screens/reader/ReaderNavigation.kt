@@ -25,11 +25,14 @@ internal class ReaderArgs(val chapterHid: String) {
 }
 
 
-fun NavGraphBuilder.reader() {
+fun NavGraphBuilder.reader(onNavigateBack: () -> Unit) {
     composable(
-        Route.Reader.route, arguments = listOf(navArgument(chapterHidArg) { type = NavType.StringType })
+        Route.Reader.route,
+        arguments = listOf(navArgument(chapterHidArg) { type = NavType.StringType })
     ) {
-        it.arguments?.getString(chapterHidArg)?.let { Reader() }
+        it.arguments?.getString(chapterHidArg)?.let {
+            Reader(onNavigateBack = onNavigateBack)
+        }
     }
 }
 

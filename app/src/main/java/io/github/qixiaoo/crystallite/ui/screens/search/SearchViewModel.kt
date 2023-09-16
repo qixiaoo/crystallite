@@ -8,7 +8,7 @@ import io.github.qixiaoo.crystallite.common.Result
 import io.github.qixiaoo.crystallite.common.asResult
 import io.github.qixiaoo.crystallite.data.model.SearchResultComic
 import io.github.qixiaoo.crystallite.data.model.SearchResultType
-import io.github.qixiaoo.crystallite.data.network.ComickRepository
+import io.github.qixiaoo.crystallite.data.repository.ComickRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow

@@ -1,4 +1,4 @@
-package io.github.qixiaoo.crystallite.data.network
+package io.github.qixiaoo.crystallite.data.repository
 
 import androidx.paging.PagingData
 import io.github.qixiaoo.crystallite.data.model.ChapterDetail

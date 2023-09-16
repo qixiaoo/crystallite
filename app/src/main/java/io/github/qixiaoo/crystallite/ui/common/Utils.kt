@@ -15,6 +15,7 @@ import io.github.qixiaoo.crystallite.common.PICTURES_SITE
 import io.github.qixiaoo.crystallite.data.model.Comic
 import io.github.qixiaoo.crystallite.data.model.MdCover
 import io.github.qixiaoo.crystallite.data.model.ProgressStatus
+import io.github.qixiaoo.crystallite.data.model.ReadingMode
 import kotlin.math.PI
 
 fun Float.pxToDp(context: Context): Float {
@@ -79,6 +80,13 @@ fun ProgressStatus.toResourceId(): Int {
         ProgressStatus.COMPLETED -> R.string.completed
         ProgressStatus.CANCELLED -> R.string.cancelled
         ProgressStatus.HIATUS -> R.string.hiatus
+    }
+}
+
+fun ReadingMode.toResourceId(): Int {
+    return when (this) {
+        ReadingMode.LeftToRight -> R.string.ltr
+        ReadingMode.RightToLeft -> R.string.rtl
     }
 }
 

@@ -16,7 +16,8 @@ data class ReadingChapterDetail(
     val images: List<ChapterImage>,
     @SerializedName("chap") val chapter: String?,
     @SerializedName("vol") val volume: String?,
-    @SerializedName("group_name") val groupNameList: List<String>?
+    @SerializedName("group_name") val groupNameList: List<String>?,
+    @SerializedName("md_comics") val mdComic: MdComic?,
 )
 
 data class ChapterImage(val w: Int, val h: Int, val url: String)
@@ -28,4 +29,10 @@ data class ChapterToBeRead(
     val title: String?,
     @SerializedName("vol") val volume: String?,
     @SerializedName("chap") val chapter: String,
+)
+
+data class MdComic(
+    val id: Int,
+    val slug: String,
+    val title: String,
 )

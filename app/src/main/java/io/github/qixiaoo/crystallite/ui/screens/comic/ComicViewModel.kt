@@ -12,7 +12,7 @@ import io.github.qixiaoo.crystallite.common.Result
 import io.github.qixiaoo.crystallite.common.asResult
 import io.github.qixiaoo.crystallite.data.model.ChapterDetail
 import io.github.qixiaoo.crystallite.data.model.ComicDetail
-import io.github.qixiaoo.crystallite.data.network.ComickRepository
+import io.github.qixiaoo.crystallite.data.repository.ComickRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted

@@ -98,7 +98,7 @@ fun Main() {
                     bookshelf()
                     me()
                     comic(onChapterClick = navController::navigateToReader)
-                    reader()
+                    reader(onNavigateBack = navController::popBackStack)
                     search(
                         onComicClick = navController::navigateToComic,
                         searchViewModel = searchViewModel

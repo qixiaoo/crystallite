@@ -31,7 +31,6 @@ fun HorizontalPager(
     pageKey: ((page: Int) -> Any)? = null,
     pageContent: @Composable (page: Int) -> Unit,
 ) {
-    val direction = LocalLayoutDirection.current
     val screenWidthDp = LocalConfiguration.current.screenWidthDp
     val screenWidthPx = screenWidthDp.dpToPx(LocalContext.current)
 
@@ -46,6 +45,8 @@ fun HorizontalPager(
     val coroutineScope = rememberCoroutineScope()
 
     val current by rememberUpdatedState(newValue = currentPage)
+
+    val direction by rememberUpdatedState(LocalLayoutDirection.current)
 
     val updatedBounds by rememberUpdatedState(
         calculateOffsetBounds(

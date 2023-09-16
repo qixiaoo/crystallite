@@ -1,4 +1,4 @@
-package io.github.qixiaoo.crystallite.data.network
+package io.github.qixiaoo.crystallite.data.repository
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -10,6 +10,8 @@ import io.github.qixiaoo.crystallite.data.model.ReadingChapter
 import io.github.qixiaoo.crystallite.data.model.SearchResultAuthor
 import io.github.qixiaoo.crystallite.data.model.SearchResultComic
 import io.github.qixiaoo.crystallite.data.model.TopComics
+import io.github.qixiaoo.crystallite.data.network.ChapterPagingSource
+import io.github.qixiaoo.crystallite.data.network.ComickNetworkDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject

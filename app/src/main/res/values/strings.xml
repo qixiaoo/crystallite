@@ -32,6 +32,11 @@
     <string name="cancelled">Cancelled</string>
     <string name="hiatus">Hiatus</string>
 
+    <!-- reading mode -->
+    <string name="reading_mode">Reading mode</string>
+    <string name="ltr">Left to right</string>
+    <string name="rtl">Right to left</string>
+
     <string name="comic">Comic</string>
     <string name="author">Author</string>
 

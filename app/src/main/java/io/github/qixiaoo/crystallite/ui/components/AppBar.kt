@@ -1,5 +1,6 @@
 package io.github.qixiaoo.crystallite.ui.components
 
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -35,9 +36,14 @@ fun AppBar(
 ) {
     var active by rememberSaveable { mutableStateOf(false) }
 
+    val horizontalPadding by animateDpAsState(
+        if (active) 0.dp else 8.dp,
+        label = "app bar horizontal padding"
+    )
+
     SearchBar(
         modifier = Modifier
-            .padding(bottom = 8.dp)
+            .padding(bottom = 8.dp, start = horizontalPadding, end = horizontalPadding)
             .fillMaxWidth()
             .then(modifier),
         query = keyword,
