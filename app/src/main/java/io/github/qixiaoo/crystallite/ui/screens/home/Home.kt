@@ -95,7 +95,7 @@ private fun HomeContent(
             Text(
                 text = stringResource(id = R.string.recently_added),
                 color = colorScheme.onBackground,
-                style = typography.titleMedium,
+                style = typography.titleLarge,
                 modifier = Modifier.padding(start = padding, end = padding, top = spaceBetween)
             )
         }
@@ -123,7 +123,7 @@ private fun HomeContent(
             Text(
                 text = stringResource(id = R.string.complete_series),
                 color = colorScheme.onBackground,
-                style = typography.titleMedium,
+                style = typography.titleLarge,
                 modifier = Modifier.padding(start = padding, end = padding, top = spaceBetween)
             )
         }

@@ -1,30 +1,34 @@
 package io.github.qixiaoo.crystallite.ui.components
 
-import androidx.compose.animation.animateColor
-import androidx.compose.animation.core.updateTransition
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -38,71 +42,22 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun CompactFilterChip(selected: Boolean, label: String, onClick: () -> Unit) {
-    val typography = MaterialTheme.typography
-    val colorScheme = MaterialTheme.colorScheme
-
-    val transition = updateTransition(selected, label = "select label")
-
-    val color by transition.animateColor(label = "font color") {
-        when (it) {
-            true -> colorScheme.background
-            false -> colorScheme.onBackground
-        }
-    }
-
-    val bgColor by transition.animateColor(label = "background  color") {
-        when (it) {
-            true -> colorScheme.onBackground
-            false -> colorScheme.background
-        }
-    }
-
-    Text(
-        text = label,
-        style = typography.labelSmall,
-        color = color,
-        modifier = Modifier
-            .clip(RoundedCornerShape(50.dp))
-            .clickable(onClick = onClick)
-            .background(color = bgColor)
-            .padding(6.dp, 3.dp)
-    )
-}
-
-
-@Composable
-fun CompactFilterChips(items: List<String>, current: Int, onSelect: (Int) -> Unit) {
-    val colorScheme = MaterialTheme.colorScheme
-
-    Row(
-        modifier = Modifier.border(
-            width = 1.dp, color = colorScheme.secondary, shape = RoundedCornerShape(50.dp)
-        )
-    ) {
-        items.forEachIndexed { index, item ->
-            CompactFilterChip(
-                selected = index == current,
-                label = item,
-                onClick = { onSelect(index) })
-        }
-    }
-}
-
-
-@Composable
 fun RecentComics(
     modifier: Modifier = Modifier,
     comics: ComicListOrderedByPeriod,
     title: String,
     padding: Dp = 0.dp,
-    onClick: (comic: Comic, index: Int) -> Unit = { _, _ -> }
+    onClick: (comic: Comic, index: Int) -> Unit = { _, _ -> },
 ) {
     val typography = MaterialTheme.typography
     val colorScheme = MaterialTheme.colorScheme
 
     var period by rememberSaveable {
-        mutableStateOf(0)
+        mutableIntStateOf(0)
+    }
+
+    var filtersExpanded by rememberSaveable {
+        mutableStateOf(false)
     }
 
     val coroutineScope = rememberCoroutineScope()
@@ -125,13 +80,48 @@ fun RecentComics(
                 .padding(horizontal = padding)
         ) {
             // title
-            Text(text = title, color = colorScheme.onBackground, style = typography.titleMedium)
+            Text(
+                text = title,
+                color = colorScheme.onBackground,
+                style = typography.titleLarge,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f)
+            )
 
             // filters
-            CompactFilterChips(items = filters, current = period) {
-                period = it
-                coroutineScope.launch {
-                    comicCarouselState.animateScrollToItem(index = 0)
+            Box(modifier = Modifier.wrapContentSize(Alignment.TopStart)) {
+                // trigger
+                Icon(
+                    imageVector = Icons.Default.MoreHoriz,
+                    contentDescription = "resume",
+                    modifier = Modifier.clickable { filtersExpanded = !filtersExpanded }
+                )
+
+                // menu
+                DropdownMenu(
+                    expanded = filtersExpanded,
+                    onDismissRequest = { filtersExpanded = false }
+                ) {
+                    for ((index, it) in filters.withIndex()) {
+                        DropdownMenuItem(
+                            text = { Text(it) },
+                            onClick = {
+                                period = index
+                                coroutineScope.launch {
+                                    comicCarouselState.animateScrollToItem(index = 0)
+                                }
+                            },
+                            trailingIcon = {
+                                if (period == index) {
+                                    Icon(
+                                        Icons.Default.Check,
+                                        contentDescription = "filter checked"
+                                    )
+                                }
+                            }
+                        )
+                    }
                 }
             }
         }
