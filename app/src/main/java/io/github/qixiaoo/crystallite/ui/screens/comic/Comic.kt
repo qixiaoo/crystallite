@@ -122,13 +122,16 @@ private fun ComicDetail(
                     followed = followed.value,
                     onFollowedChange = {
                         coroutineScope.launch {
+                            val mdCover = comicDetail.comic.mdCovers.getOrNull(0) ?: return@launch
+
                             comicState.toggleFollowedComic(
                                 isFollowed = it,
                                 comic = FollowedComic(
                                     entityId = 0L,
                                     hid = comicDetail.comic.hid,
                                     slug = comicDetail.comic.slug,
-                                    title = title
+                                    title = title,
+                                    mdCover = mdCover
                                 )
                             )
                         }

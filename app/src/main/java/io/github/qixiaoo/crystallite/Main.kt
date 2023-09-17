@@ -95,7 +95,7 @@ fun Main() {
                     modifier = Modifier.padding(it)
                 ) {
                     home(onComicClick = navController::navigateToComic)
-                    bookshelf()
+                    bookshelf(onComicClick = navController::navigateToComic)
                     me()
                     comic(onChapterClick = navController::navigateToReader)
                     reader(onNavigateBack = navController::popBackStack)

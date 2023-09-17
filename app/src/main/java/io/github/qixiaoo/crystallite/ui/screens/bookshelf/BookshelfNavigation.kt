@@ -5,8 +5,8 @@ import androidx.navigation.compose.composable
 import io.github.qixiaoo.crystallite.ui.common.Route
 
 
-fun NavGraphBuilder.bookshelf() {
+fun NavGraphBuilder.bookshelf(onComicClick: (slug: String) -> Unit) {
     composable(Route.Bookshelf.route) {
-        Bookshelf()
+        Bookshelf(onComicClick = onComicClick)
     }
 }

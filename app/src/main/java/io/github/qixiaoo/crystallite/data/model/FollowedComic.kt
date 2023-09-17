@@ -5,4 +5,5 @@ data class FollowedComic(
     val hid: String,
     val slug: String,
     val title: String,
+    val mdCover: MdCover,
 )

@@ -1,12 +1,10 @@
 package io.github.qixiaoo.crystallite.ui.screens.search
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -37,6 +35,7 @@ import io.github.qixiaoo.crystallite.data.model.SearchResultComic
 import io.github.qixiaoo.crystallite.data.model.SearchResultType
 import io.github.qixiaoo.crystallite.ui.common.getCoverUrl
 import io.github.qixiaoo.crystallite.ui.common.toResourceId
+import io.github.qixiaoo.crystallite.ui.components.CenteredMessage
 import io.github.qixiaoo.crystallite.ui.components.ErrorMessage
 import io.github.qixiaoo.crystallite.ui.theme.CrystalliteTheme
 
@@ -184,19 +183,6 @@ private fun Comic(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun CenteredMessage(message: String) {
-    val typography = MaterialTheme.typography
-
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Text(text = message, style = typography.bodyMedium)
     }
 }
 

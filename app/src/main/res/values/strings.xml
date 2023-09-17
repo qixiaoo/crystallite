@@ -3,7 +3,7 @@
 
     <!-- tab bar -->
     <string name="home">Home</string>
-    <string name="bookshelf">My List</string>
+    <string name="library">Library</string>
     <string name="me">Me</string>
 
     <!-- filters -->

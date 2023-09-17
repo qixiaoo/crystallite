@@ -39,7 +39,7 @@ fun TabBar(
             Route.Bookshelf,
             Icons.Outlined.Book,
             Icons.Filled.Book,
-            stringResource(R.string.bookshelf)
+            stringResource(R.string.library)
         ),
         TabItem(
             Route.Me,

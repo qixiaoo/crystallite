@@ -2,6 +2,7 @@ package io.github.qixiaoo.crystallite.ui.common
 
 import android.content.Context
 import android.graphics.BlurMaskFilter
+import android.widget.Toast
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
@@ -74,6 +75,10 @@ fun getCoverUrl(mdCovers: List<MdCover>): String? {
     return if (firstCover == null) null else PICTURES_SITE.plus(firstCover)
 }
 
+fun getCoverUrl(mdCover: MdCover): String {
+    return PICTURES_SITE.plus(mdCover.b2key)
+}
+
 fun ProgressStatus.toResourceId(): Int {
     return when (this) {
         ProgressStatus.ONGOING -> R.string.ongoing
@@ -92,4 +97,9 @@ fun ReadingMode.toResourceId(): Int {
 
 fun radToDeg(rad: Double): Double {
     return rad / PI * 180
+}
+
+fun String.toast(context: Context, short: Boolean = true) {
+    val duration = if (short) Toast.LENGTH_SHORT else Toast.LENGTH_LONG
+    Toast.makeText(context, this, duration).show()
 }

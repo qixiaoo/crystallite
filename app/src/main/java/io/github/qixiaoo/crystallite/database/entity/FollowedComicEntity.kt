@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import io.github.qixiaoo.crystallite.data.model.FollowedComic
+import io.github.qixiaoo.crystallite.data.model.MdCover
 
 @Entity(tableName = "followed_comic", indices = [Index(value = ["hid", "title"])])
 data class FollowedComicEntity(
@@ -19,6 +20,15 @@ data class FollowedComicEntity(
 
     @ColumnInfo(defaultValue = "")
     val title: String,
+
+    @ColumnInfo(name = "cover_width")
+    val coverWidth: Int,
+
+    @ColumnInfo(name = "cover_height")
+    val coverHeight: Int,
+
+    @ColumnInfo(name = "cover_b2_key")
+    val coverB2Key: String,
 )
 
 fun FollowedComicEntity.toModel(): FollowedComic {
@@ -26,7 +36,8 @@ fun FollowedComicEntity.toModel(): FollowedComic {
         entityId = entityId,
         hid = hid,
         slug = slug,
-        title = title
+        title = title,
+        mdCover = MdCover(w = coverWidth, h = coverHeight, b2key = coverB2Key)
     )
 }
 
@@ -35,6 +46,9 @@ fun FollowedComic.toEntity(): FollowedComicEntity {
         entityId = entityId,
         hid = hid,
         slug = slug,
-        title = title
+        title = title,
+        coverWidth = mdCover.w,
+        coverHeight = mdCover.h,
+        coverB2Key = mdCover.b2key
     )
 }
