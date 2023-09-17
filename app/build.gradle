@@ -8,6 +8,9 @@ plugins {
 
     // protobuf
     id "com.google.protobuf" version "0.9.1"
+
+    // KSP
+    id 'com.google.devtools.ksp'
 }
 
 android {
@@ -54,6 +57,13 @@ android {
 }
 
 dependencies {
+    // room
+    def room_version = "2.5.2"
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    ksp "androidx.room:room-compiler:$room_version"
+
     // datastore
     implementation "androidx.datastore:datastore:1.0.0"
     implementation  "com.google.protobuf:protobuf-javalite:3.23.4"

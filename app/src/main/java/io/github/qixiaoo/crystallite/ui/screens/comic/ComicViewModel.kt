@@ -1,6 +1,7 @@
 package io.github.qixiaoo.crystallite.ui.screens.comic
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,19 +13,24 @@ import io.github.qixiaoo.crystallite.common.Result
 import io.github.qixiaoo.crystallite.common.asResult
 import io.github.qixiaoo.crystallite.data.model.ChapterDetail
 import io.github.qixiaoo.crystallite.data.model.ComicDetail
+import io.github.qixiaoo.crystallite.data.model.FollowedComic
 import io.github.qixiaoo.crystallite.data.repository.ComickRepository
+import io.github.qixiaoo.crystallite.data.repository.FollowedComicRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.zip
 import javax.inject.Inject
 
 
 @HiltViewModel
 class ComicViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle, val comickRepository: ComickRepository
+    savedStateHandle: SavedStateHandle,
+    comickRepository: ComickRepository,
+    followedComicRepository: FollowedComicRepository,
 ) : ViewModel() {
 
     private val comicArgs: ComicArgs = ComicArgs(savedStateHandle)
@@ -32,7 +38,10 @@ class ComicViewModel @Inject constructor(
     val slug = comicArgs.slug
 
     val comicUiState: StateFlow<ComicUiState> = comicUiState(
-        slug = slug, comickRepository = comickRepository
+        slug = slug,
+        comickRepository = comickRepository,
+        followedComicRepository = followedComicRepository,
+        scope = viewModelScope
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
@@ -41,42 +50,63 @@ class ComicViewModel @Inject constructor(
 }
 
 
-class ChaptersViewModel(
-    hid: String, comickRepository: ComickRepository
-) : ViewModel() {
-
-    val chaptersUiState: Flow<PagingData<ChapterDetail>> = chaptersUiState(
-        hid = hid,
-        language = DEFAULT_LANGUAGE,
-        scope = viewModelScope,
-        comickRepository = comickRepository
-    )
-}
-
-
-private fun comicUiState(slug: String, comickRepository: ComickRepository): Flow<ComicUiState> {
+private fun comicUiState(
+    slug: String,
+    language: String = DEFAULT_LANGUAGE,
+    comickRepository: ComickRepository,
+    followedComicRepository: FollowedComicRepository,
+    scope: CoroutineScope,
+): Flow<ComicUiState> {
     Log.v(::comicUiState.name, "fetch comic detail: $slug")
+
     val comicSteam = comickRepository.comic(slug)
-    return comicSteam.asResult().map { result ->
+    val followedComicsStream = followedComicRepository.getFollowedComics()
+
+    return comicSteam.zip(followedComicsStream, ::Pair).asResult().map { result ->
         when (result) {
             is Result.Error -> ComicUiState.Error(result.exception?.message)
             is Result.Loading -> ComicUiState.Loading
-            is Result.Success -> ComicUiState.Success(comic = result.data)
+
+            is Result.Success -> {
+                val (comic, followedComics) = result.data
+
+                val hid = comic.comic.hid
+                val pagingChapters =
+                    comickRepository.chapters(hid = hid, language = language).cachedIn(scope)
+
+                ComicUiState.Success(
+                    comic = comic,
+                    pagingChapters = pagingChapters,
+                    followedComic = followedComics.map { it.hid }.contains(comic.comic.hid),
+                    followedComicRepository = followedComicRepository,
+                )
+            }
         }
     }
 }
 
 
-private fun chaptersUiState(
-    hid: String, language: String, scope: CoroutineScope, comickRepository: ComickRepository
-): Flow<PagingData<ChapterDetail>> {
-    Log.v(::chaptersUiState.name, "fetch comic chapters: $hid")
-    return comickRepository.chapters(hid = hid, language = language).cachedIn(scope)
-}
-
-
 sealed interface ComicUiState {
-    data class Success(val comic: ComicDetail) : ComicUiState
-    data class Error(val message: String? = null) : ComicUiState
     object Loading : ComicUiState
+
+    data class Error(val message: String? = null) : ComicUiState
+
+    data class Success(
+        val comic: ComicDetail,
+        val pagingChapters: Flow<PagingData<ChapterDetail>>,
+        private val followedComic: Boolean,
+        private val followedComicRepository: FollowedComicRepository,
+    ) : ComicUiState {
+
+        val followed = mutableStateOf(followedComic)
+
+        suspend fun toggleFollowedComic(isFollowed: Boolean, comic: FollowedComic) {
+            if (isFollowed) {
+                followedComicRepository.followComics(comics = listOf(comic))
+            } else {
+                followedComicRepository.unfollowComics(comicHids = listOf(comic.hid))
+            }
+            followed.value = isFollowed
+        }
+    }
 }

@@ -7,6 +7,8 @@ import dagger.hilt.components.SingletonComponent
 import io.github.qixiaoo.crystallite.data.network.ComickNetwork
 import io.github.qixiaoo.crystallite.data.network.ComickNetworkDataSource
 import io.github.qixiaoo.crystallite.data.repository.ComickRepository
+import io.github.qixiaoo.crystallite.data.repository.FollowedComicRepository
+import io.github.qixiaoo.crystallite.data.repository.LocalFollowedComicRepository
 import io.github.qixiaoo.crystallite.data.repository.LocalUserPreferencesRepository
 import io.github.qixiaoo.crystallite.data.repository.NetworkComickRepository
 import io.github.qixiaoo.crystallite.data.repository.UserPreferencesRepository
@@ -23,5 +25,8 @@ interface DataModule {
     fun bindComickNetworkDataSource(comickNetwork: ComickNetwork): ComickNetworkDataSource
 
     @Binds
-    fun bindUserPreferencesRepository(userPreferencesRepository: LocalUserPreferencesRepository): UserPreferencesRepository
+    fun bindUserPreferencesRepository(localUserPreferencesRepository: LocalUserPreferencesRepository): UserPreferencesRepository
+
+    @Binds
+    fun bindFollowedComicRepository(localFollowedComicRepository: LocalFollowedComicRepository): FollowedComicRepository
 }
