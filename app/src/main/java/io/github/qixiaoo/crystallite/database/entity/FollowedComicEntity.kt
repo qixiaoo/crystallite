@@ -5,9 +5,10 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import io.github.qixiaoo.crystallite.data.model.FollowedComic
+import io.github.qixiaoo.crystallite.data.model.FollowedComicReadingChapter
 import io.github.qixiaoo.crystallite.data.model.MdCover
 
-@Entity(tableName = "followed_comic", indices = [Index(value = ["hid", "title"])])
+@Entity(tableName = "followed_comic", indices = [Index(value = ["hid", "slug", "title"])])
 data class FollowedComicEntity(
     @PrimaryKey(autoGenerate = true)
     val entityId: Long,
@@ -29,15 +30,43 @@ data class FollowedComicEntity(
 
     @ColumnInfo(name = "cover_b2_key")
     val coverB2Key: String,
+
+    @ColumnInfo(name = "reading_chapter_hid")
+    val readingChapterHid: String,
+
+    @ColumnInfo(name = "reading_chapter_number")
+    val readingChapterNumber: String,
+
+    @ColumnInfo(name = "reading_chapter_curr_page")
+    val readingChapterCurrPage: Int,
+
+    @ColumnInfo(name = "reading_chapter_total_page")
+    val readingChapterTotalPage: Int,
+
+    @ColumnInfo(name = "next_chapter_hid")
+    val nextChapterHid: String,
 )
 
 fun FollowedComicEntity.toModel(): FollowedComic {
+    val readingChapter = if (readingChapterHid.isEmpty()) {
+        null
+    } else {
+        FollowedComicReadingChapter(
+            readingChapterHid = readingChapterHid,
+            readingChapterNumber = readingChapterNumber,
+            readingChapterCurrPage = readingChapterCurrPage,
+            readingChapterTotalPage = readingChapterTotalPage,
+            nextChapterHid = nextChapterHid,
+        )
+    }
+
     return FollowedComic(
         entityId = entityId,
         hid = hid,
         slug = slug,
         title = title,
-        mdCover = MdCover(w = coverWidth, h = coverHeight, b2key = coverB2Key)
+        mdCover = MdCover(w = coverWidth, h = coverHeight, b2key = coverB2Key),
+        readingChapter = readingChapter
     )
 }
 
@@ -47,8 +76,15 @@ fun FollowedComic.toEntity(): FollowedComicEntity {
         hid = hid,
         slug = slug,
         title = title,
+
         coverWidth = mdCover.w,
         coverHeight = mdCover.h,
-        coverB2Key = mdCover.b2key
+        coverB2Key = mdCover.b2key,
+
+        readingChapterHid = readingChapter?.readingChapterHid ?: "",
+        readingChapterNumber = readingChapter?.readingChapterNumber ?: "0",
+        readingChapterCurrPage = readingChapter?.readingChapterCurrPage ?: 0,
+        readingChapterTotalPage = readingChapter?.readingChapterTotalPage ?: 0,
+        nextChapterHid = readingChapter?.nextChapterHid ?: ""
     )
 }

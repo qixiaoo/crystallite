@@ -10,6 +10,9 @@ import javax.inject.Inject
 class LocalFollowedComicRepository @Inject constructor(private val followedComicDao: FollowedComicDao) :
     FollowedComicRepository {
 
+    override fun getFollowedComic(comicHid: String) =
+        followedComicDao.getFollowedComic(comicHid = comicHid).map { it?.toModel() }
+
     override fun getFollowedComics() =
         followedComicDao.getFollowedComics().map { it.map { entity -> entity.toModel() } }
 
@@ -18,4 +21,7 @@ class LocalFollowedComicRepository @Inject constructor(private val followedComic
 
     override suspend fun unfollowComics(comicHids: List<String>) =
         followedComicDao.deleteFollowedComics(comicHids)
+
+    override suspend fun updateFollowedComic(comic: FollowedComic) =
+        followedComicDao.upsertFollowedComics(comics = listOf(comic.toEntity()))
 }

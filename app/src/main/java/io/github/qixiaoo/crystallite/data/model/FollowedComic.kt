@@ -6,4 +6,14 @@ data class FollowedComic(
     val slug: String,
     val title: String,
     val mdCover: MdCover,
+    val readingChapter: FollowedComicReadingChapter?
+)
+
+
+data class FollowedComicReadingChapter(
+    val readingChapterHid: String,
+    val readingChapterNumber: String,
+    val readingChapterCurrPage: Int,
+    val readingChapterTotalPage: Int,
+    val nextChapterHid: String,
 )

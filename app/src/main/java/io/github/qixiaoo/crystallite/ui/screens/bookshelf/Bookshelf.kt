@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -59,7 +58,6 @@ private fun BookshelfContent(
     val typography = MaterialTheme.typography
     val colorScheme = MaterialTheme.colorScheme
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val screenHeightDp = LocalConfiguration.current.screenHeightDp.dp
 
     val chunkedFollowedComic = remember(followedComics) {
         followedComics.chunked(GRID_ROW_ITEM_COUNT)
@@ -68,7 +66,6 @@ private fun BookshelfContent(
     val padding = 20.dp
     val titleTopPadding = 30.dp
     val gridRowTopPadding = 15.dp
-    val titleHeight = 70.dp
 
     val coverRatio = (3f / 4f)
     val gridItemGap = 20.dp
@@ -77,6 +74,16 @@ private fun BookshelfContent(
     val gridItemHeight = gridItemWidth / coverRatio
 
     LazyColumn(modifier = Modifier.fillMaxSize()) {
+        if (followedComics.isEmpty()) {
+            item {
+                CenteredMessage(
+                    message = stringResource(R.string.empty),
+                    modifier = Modifier.fillParentMaxHeight()
+                )
+            }
+            return@LazyColumn
+        }
+
         item {
             Text(
                 text = stringResource(id = R.string.library),
@@ -84,16 +91,6 @@ private fun BookshelfContent(
                 style = typography.titleLarge,
                 modifier = Modifier.padding(start = padding, end = padding, top = titleTopPadding)
             )
-        }
-
-        if (followedComics.isEmpty()) {
-            item {
-                CenteredMessage(
-                    message = stringResource(R.string.empty),
-                    modifier = Modifier.heightIn(min = screenHeightDp - titleHeight)
-                )
-            }
-            return@LazyColumn
         }
 
         items(items = chunkedFollowedComic) {

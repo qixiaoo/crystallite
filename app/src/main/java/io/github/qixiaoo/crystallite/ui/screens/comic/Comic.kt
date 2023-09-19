@@ -1,7 +1,6 @@
 package io.github.qixiaoo.crystallite.ui.screens.comic
 
 
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,11 +23,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FilledIconToggleButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,7 +38,6 @@ import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,7 +54,6 @@ import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
 import io.github.qixiaoo.crystallite.R
 import io.github.qixiaoo.crystallite.data.model.ChapterDetail
-import io.github.qixiaoo.crystallite.data.model.FollowedComic
 import io.github.qixiaoo.crystallite.data.model.ProgressStatus
 import io.github.qixiaoo.crystallite.ui.common.getCoverUrl
 import io.github.qixiaoo.crystallite.ui.common.toResourceId
@@ -71,7 +67,7 @@ private val CHAPTER_HEIGHT = 56.dp
 
 @Composable
 internal fun Comic(
-    onChapterClick: (chapter: ChapterDetail) -> Unit,
+    onChapterClick: (chapterHid: String) -> Unit,
     comicViewModel: ComicViewModel = hiltViewModel(),
 ) {
     val comicState by comicViewModel.comicUiState.collectAsStateWithLifecycle()
@@ -80,12 +76,19 @@ internal fun Comic(
         is ComicUiState.Error -> ErrorMessage(message = (comicState as ComicUiState.Error).message)
         ComicUiState.Loading -> LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
         is ComicUiState.Success -> {
-            val pagingChapters = (comicState as ComicUiState.Success).pagingChapters
+            val comicStateSuccess = comicState as ComicUiState.Success
+            val pagingChapters = comicStateSuccess.pagingChapters
 
             ComicDetail(
-                comicState = comicState as ComicUiState.Success,
+                comicState = comicStateSuccess,
                 pagingChapters = pagingChapters,
-                onChapterClick = onChapterClick
+                onChapterClick = { onChapterClick(it.hid) },
+                onResume = {
+                    onChapterClick(
+                        comicStateSuccess.followedComic?.readingChapter?.readingChapterHid
+                            ?: comicStateSuccess.comic.firstChap.hid
+                    )
+                }
             )
         }
     }
@@ -96,11 +99,11 @@ private fun ComicDetail(
     comicState: ComicUiState.Success,
     pagingChapters: Flow<PagingData<ChapterDetail>>,
     onChapterClick: (chapter: ChapterDetail) -> Unit = {},
+    onResume: () -> Unit = {},
 ) {
     val coroutineScope = rememberCoroutineScope()
     val chapterPagingItems = pagingChapters.collectAsLazyPagingItems()
 
-    val context = LocalContext.current
     val comicDetail = comicState.comic
     val title = comicDetail.comic.title
     val authors = comicDetail.authors.map { it.name }
@@ -122,18 +125,7 @@ private fun ComicDetail(
                     followed = followed.value,
                     onFollowedChange = {
                         coroutineScope.launch {
-                            val mdCover = comicDetail.comic.mdCovers.getOrNull(0) ?: return@launch
-
-                            comicState.toggleFollowedComic(
-                                isFollowed = it,
-                                comic = FollowedComic(
-                                    entityId = 0L,
-                                    hid = comicDetail.comic.hid,
-                                    slug = comicDetail.comic.slug,
-                                    title = title,
-                                    mdCover = mdCover
-                                )
-                            )
+                            comicState.toggleFollowedComic(isFollowed = it)
                         }
                     }
                 )
@@ -145,20 +137,14 @@ private fun ComicDetail(
 
         // resume button
         val resumeButton = createRef()
-        SmallFloatingActionButton(onClick = {}, modifier = Modifier.constrainAs(resumeButton) {
+        FloatingActionButton(onClick = onResume, modifier = Modifier.constrainAs(resumeButton) {
             bottom.linkTo(anchor = parent.bottom, margin = 20.dp)
             end.linkTo(anchor = parent.end, margin = 20.dp)
         }) {
-            IconButton(
-                onClick = {
-                    Toast.makeText(context, R.string.not_implemented, Toast.LENGTH_SHORT).show()
-                }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.PlayArrow,
-                    contentDescription = "resume",
-                )
-            }
+            Icon(
+                imageVector = Icons.Default.PlayArrow,
+                contentDescription = "resume",
+            )
         }
     }
 }

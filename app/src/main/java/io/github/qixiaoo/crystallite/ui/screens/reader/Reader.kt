@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -16,6 +17,7 @@ import io.github.qixiaoo.crystallite.data.model.ReadingMode
 import io.github.qixiaoo.crystallite.ui.components.ErrorMessage
 import io.github.qixiaoo.crystallite.ui.components.reader.ReaderHud
 import io.github.qixiaoo.crystallite.ui.components.reader.SinglePageReader
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -45,6 +47,7 @@ private fun ReaderContent(
     readerViewModel: ReaderViewModel,
     onNavigateBack: () -> Unit,
 ) {
+    val coroutineScope = rememberCoroutineScope()
     val current = readerUiState.currentPage.collectAsStateWithLifecycle()
     val readingMode = readerUiState.readingMode.collectAsStateWithLifecycle()
     var isHudVisible by remember { readerUiState.isHudVisible }
@@ -63,7 +66,7 @@ private fun ReaderContent(
             current = current.value,
             imageList = imageList,
             onClick = { isHudVisible = !isHudVisible },
-            onPageChange = { readerUiState.setCurrentPage(it) }
+            onPageChange = { coroutineScope.launch { readerUiState.setCurrentPage(it) } }
         )
     }
 
@@ -74,13 +77,13 @@ private fun ReaderContent(
         chapter = readingChapter.chapter,
         chapterTitle = readingChapter.title,
         readingMode = readingModeValue,
-        onPageChange = readerUiState::setCurrentPage,
+        onPageChange = { coroutineScope.launch { readerUiState.setCurrentPage(it) } },
         isReaderHudVisible = isHudVisible,
         enablePreviousChapter = readerUiState.isPrevChapterEnabled,
         enableNextChapter = readerUiState.isNextChapterEnabled,
-        onNavigateToPrevChapter = readerViewModel::navigateToPrevChapter,
-        onNavigateToNextChapter = readerViewModel::navigateToNextChapter,
-        onReadingModeChange = readerUiState::setReadingMode,
+        onNavigateToPrevChapter = { coroutineScope.launch { readerViewModel.navigateToPrevChapter() } },
+        onNavigateToNextChapter = { coroutineScope.launch { readerViewModel.navigateToNextChapter() } },
+        onReadingModeChange = { coroutineScope.launch { readerUiState.setReadingMode(it) } },
         onNavigateBack = onNavigateBack
     )
 }

@@ -17,11 +17,15 @@ import io.github.qixiaoo.crystallite.data.model.FollowedComic
 import io.github.qixiaoo.crystallite.data.repository.ComickRepository
 import io.github.qixiaoo.crystallite.data.repository.FollowedComicRepository
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.zip
 import javax.inject.Inject
 
@@ -50,6 +54,7 @@ class ComicViewModel @Inject constructor(
 }
 
 
+@OptIn(ExperimentalCoroutinesApi::class)
 private fun comicUiState(
     slug: String,
     language: String = DEFAULT_LANGUAGE,
@@ -60,15 +65,19 @@ private fun comicUiState(
     Log.v(::comicUiState.name, "fetch comic detail: $slug")
 
     val comicSteam = comickRepository.comic(slug)
-    val followedComicsStream = followedComicRepository.getFollowedComics()
 
-    return comicSteam.zip(followedComicsStream, ::Pair).asResult().map { result ->
+    val comicWithFollowedComicStream = comicSteam.flatMapLatest {
+        val followedComic = followedComicRepository.getFollowedComic(it.comic.hid).take(1)
+        flowOf(it).zip(followedComic, ::Pair)
+    }
+
+    return comicWithFollowedComicStream.asResult().map { result ->
         when (result) {
             is Result.Error -> ComicUiState.Error(result.exception?.message)
             is Result.Loading -> ComicUiState.Loading
 
             is Result.Success -> {
-                val (comic, followedComics) = result.data
+                val (comic, followedComic) = result.data
 
                 val hid = comic.comic.hid
                 val pagingChapters =
@@ -77,7 +86,7 @@ private fun comicUiState(
                 ComicUiState.Success(
                     comic = comic,
                     pagingChapters = pagingChapters,
-                    followedComic = followedComics.map { it.hid }.contains(comic.comic.hid),
+                    followedComic = followedComic,
                     followedComicRepository = followedComicRepository,
                 )
             }
@@ -94,18 +103,30 @@ sealed interface ComicUiState {
     data class Success(
         val comic: ComicDetail,
         val pagingChapters: Flow<PagingData<ChapterDetail>>,
-        private val followedComic: Boolean,
+        val followedComic: FollowedComic?,
         private val followedComicRepository: FollowedComicRepository,
     ) : ComicUiState {
 
-        val followed = mutableStateOf(followedComic)
+        val followed = mutableStateOf(followedComic != null)
 
-        suspend fun toggleFollowedComic(isFollowed: Boolean, comic: FollowedComic) {
+        suspend fun toggleFollowedComic(isFollowed: Boolean) {
+            val mdCover = comic.comic.mdCovers.getOrNull(0) ?: return
+
+            val followedComic = FollowedComic(
+                entityId = 0L,
+                hid = comic.comic.hid,
+                slug = comic.comic.slug,
+                title = comic.comic.title,
+                mdCover = mdCover,
+                readingChapter = null
+            )
+
             if (isFollowed) {
-                followedComicRepository.followComics(comics = listOf(comic))
+                followedComicRepository.followComics(comics = listOf(followedComic))
             } else {
-                followedComicRepository.unfollowComics(comicHids = listOf(comic.hid))
+                followedComicRepository.unfollowComics(comicHids = listOf(comic.comic.hid))
             }
+
             followed.value = isFollowed
         }
     }

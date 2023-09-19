@@ -16,7 +16,7 @@ interface FollowedComicDao {
             WHERE hid = :comicHid
         """
     )
-    fun getFollowedComic(comicHid: String): Flow<FollowedComicEntity>
+    fun getFollowedComic(comicHid: String): Flow<FollowedComicEntity?>
 
     @Query(value = "SELECT * FROM followed_comic")
     fun getFollowedComics(): Flow<List<FollowedComicEntity>>

@@ -33,6 +33,7 @@ data class ChapterToBeRead(
 
 data class MdComic(
     val id: Int,
+    val hid: String,
     val slug: String,
     val title: String,
 )

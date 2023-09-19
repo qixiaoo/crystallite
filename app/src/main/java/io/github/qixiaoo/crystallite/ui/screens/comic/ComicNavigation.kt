@@ -29,7 +29,7 @@ fun NavGraphBuilder.comic(onChapterClick: (hid: String) -> Unit) {
     composable(
         Route.Comic.route, arguments = listOf(navArgument(slugArg) { type = NavType.StringType })
     ) {
-        it.arguments?.getString(slugArg)?.let { _ -> Comic(onChapterClick = { chapter ->  onChapterClick(chapter.hid) }) }
+        it.arguments?.getString(slugArg)?.let { _ -> Comic(onChapterClick = { chapterHid ->  onChapterClick(chapterHid) }) }
     }
 }
 
