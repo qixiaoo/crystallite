@@ -8,4 +8,6 @@ interface UserPreferencesRepository {
     val userPreferences: Flow<UserPreferences>
 
     suspend fun setReadingMode(mode: ReadingMode)
+
+    suspend fun setVolumeKeysNavigation(enabled: Boolean)
 }

@@ -9,7 +9,8 @@ import javax.inject.Inject
 class UserPreferencesDataSource @Inject constructor(private val userPreferencesDataStore: DataStore<UserPreferencesProto>) {
     val userPreferences = userPreferencesDataStore.data.map {
         UserPreferences(
-            readingMode = it.readingMode.toModel()
+            readingMode = it.readingMode.toModel(),
+            volumeKeysNavigation = it.volumeKeysNavigation,
         )
     }
 
@@ -17,6 +18,12 @@ class UserPreferencesDataSource @Inject constructor(private val userPreferencesD
         userPreferencesDataStore.updateData { currentUserPreferences ->
             val modeProto = mode.toProto()
             currentUserPreferences.toBuilder().setReadingMode(modeProto).build()
+        }
+    }
+
+    suspend fun setVolumeKeysNavigation(enabled: Boolean) {
+        userPreferencesDataStore.updateData { currentUserPreferences ->
+            currentUserPreferences.toBuilder().setVolumeKeysNavigation(enabled).build()
         }
     }
 }

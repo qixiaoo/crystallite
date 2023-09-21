@@ -13,4 +13,7 @@ class LocalUserPreferencesRepository @Inject constructor(
 
     override suspend fun setReadingMode(mode: ReadingMode) =
         userPreferencesDataSource.setReadingMode(mode)
+
+    override suspend fun setVolumeKeysNavigation(enabled: Boolean) =
+        userPreferencesDataSource.setVolumeKeysNavigation(enabled)
 }

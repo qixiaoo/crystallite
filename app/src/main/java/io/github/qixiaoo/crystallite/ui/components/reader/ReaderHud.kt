@@ -21,6 +21,7 @@ import io.github.qixiaoo.crystallite.ui.theme.CrystalliteTheme
 
 @Composable
 fun ReaderHud(
+    modifier: Modifier = Modifier,
     current: Int,
     pageCount: Int,
     readingMode: ReadingMode,
@@ -69,7 +70,12 @@ fun ReaderHud(
         }
     }
 
-    ConstraintLayout(constraintSet = constraintSet, modifier = Modifier.fillMaxSize()) {
+    ConstraintLayout(
+        constraintSet = constraintSet,
+        modifier = Modifier
+            .fillMaxSize()
+            .then(modifier)
+    ) {
         PageTopBar(
             title = title,
             chapter = chapter,

@@ -201,6 +201,12 @@ sealed interface ReaderUiState {
             initialValue = ReadingMode.LeftToRight
         )
 
+        val volumeKeysNavigation = userPreferences.map { it.volumeKeysNavigation }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = false
+        )
+
         var isHudVisible = mutableStateOf(false)
 
         val imageList: List<String>

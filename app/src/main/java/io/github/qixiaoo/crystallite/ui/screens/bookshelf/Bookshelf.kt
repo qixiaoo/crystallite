@@ -64,7 +64,7 @@ private fun BookshelfContent(
     }
 
     val padding = 20.dp
-    val titleTopPadding = 30.dp
+    val titleTopPadding = 30.dp + 8.dp
     val gridRowTopPadding = 15.dp
 
     val coverRatio = (3f / 4f)
