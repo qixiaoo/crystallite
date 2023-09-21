@@ -50,7 +50,10 @@ private fun topComicsUiState(comickRepository: ComickRepository): Flow<TopComics
     Log.v(::topComicsUiState.name, "fetch top comics")
     return comickRepository.top(Gender.MALE).asResult().map { result ->
         when (result) {
-            is Result.Error -> TopComicsUiState.Error(message = result.exception?.message)
+            is Result.Error -> TopComicsUiState.Error(
+                message = result.exception?.message ?: result.exception.toString()
+            )
+
             Result.Loading -> TopComicsUiState.Loading
             is Result.Success -> TopComicsUiState.Success(topComics = result.data)
         }

@@ -32,7 +32,9 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            debuggable false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -87,7 +89,6 @@ dependencies {
     // loading images
     implementation "io.coil-kt:coil-compose:2.4.0"
 
-    // TODO: strip unused icons
     // extra icons
     implementation "androidx.compose.material:material-icons-extended"
 
