@@ -67,7 +67,7 @@ fun HorizontalPager(
             .fillMaxSize()
             .pointerInput(Unit) {
                 detectHorizontalPagerDragGestures(
-                    onHorizontalDrag = { c, delta ->
+                    onHorizontalDrag = { _, delta ->
                         coroutineScope.launch {
                             val (lowerBound, upperBound) = updatedBounds
                             deltaXRef.value += delta

@@ -28,6 +28,11 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+
+        // database schema
+        ksp {
+            arg('room.schemaLocation', "$projectDir/schemas")
+        }
     }
 
     buildTypes {

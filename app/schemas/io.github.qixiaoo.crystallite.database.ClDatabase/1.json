@@ -1,0 +1,115 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "e214dc91ed948961c2438bb4c48eda70",
+    "entities": [
+      {
+        "tableName": "followed_comic",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`entityId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `hid` TEXT NOT NULL DEFAULT '', `slug` TEXT NOT NULL DEFAULT '', `title` TEXT NOT NULL DEFAULT '', `cover_width` INTEGER NOT NULL, `cover_height` INTEGER NOT NULL, `cover_b2_key` TEXT NOT NULL, `reading_chapter_hid` TEXT NOT NULL, `reading_chapter_number` TEXT NOT NULL, `reading_chapter_curr_page` INTEGER NOT NULL, `reading_chapter_total_page` INTEGER NOT NULL, `next_chapter_hid` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "entityId",
+            "columnName": "entityId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hid",
+            "columnName": "hid",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
+          },
+          {
+            "fieldPath": "slug",
+            "columnName": "slug",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
+          },
+          {
+            "fieldPath": "coverWidth",
+            "columnName": "cover_width",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "coverHeight",
+            "columnName": "cover_height",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "coverB2Key",
+            "columnName": "cover_b2_key",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "readingChapterHid",
+            "columnName": "reading_chapter_hid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "readingChapterNumber",
+            "columnName": "reading_chapter_number",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "readingChapterCurrPage",
+            "columnName": "reading_chapter_curr_page",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "readingChapterTotalPage",
+            "columnName": "reading_chapter_total_page",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nextChapterHid",
+            "columnName": "next_chapter_hid",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "entityId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_followed_comic_hid_slug_title",
+            "unique": false,
+            "columnNames": [
+              "hid",
+              "slug",
+              "title"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_followed_comic_hid_slug_title` ON `${TABLE_NAME}` (`hid`, `slug`, `title`)"
+          }
+        ],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e214dc91ed948961c2438bb4c48eda70')"
+    ]
+  }
+}

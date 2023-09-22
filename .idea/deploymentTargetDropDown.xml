@@ -2,22 +2,7 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="ComicDetailHeaderPreview">
-        <State />
-      </entry>
-      <entry key="PageNavigatorPreview">
-        <State />
-      </entry>
-      <entry key="PageTopBarPreview">
-        <State />
-      </entry>
-      <entry key="ReadingChapterPreview">
-        <State />
-      </entry>
-      <entry key="SinglePageReaderPreview">
-        <State />
-      </entry>
-      <entry key="app">
+      <entry key="debug">
         <State />
       </entry>
     </value>
