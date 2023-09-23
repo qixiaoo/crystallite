@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import io.github.qixiaoo.crystallite.R
 import io.github.qixiaoo.crystallite.common.PICTURES_SITE
 import io.github.qixiaoo.crystallite.data.model.Comic
+import io.github.qixiaoo.crystallite.data.model.Gender
 import io.github.qixiaoo.crystallite.data.model.MdCover
 import io.github.qixiaoo.crystallite.data.model.ProgressStatus
 import io.github.qixiaoo.crystallite.data.model.ReadingMode
@@ -92,6 +93,14 @@ fun ReadingMode.toResourceId(): Int {
     return when (this) {
         ReadingMode.LeftToRight -> R.string.ltr
         ReadingMode.RightToLeft -> R.string.rtl
+    }
+}
+
+fun Gender.toResourceId(): Int {
+    return when (this) {
+        Gender.MALE -> R.string.gender_filter_male
+        Gender.FEMALE -> R.string.gender_filter_female
+        Gender.UNKNOWN -> R.string.gender_filter_none
     }
 }
 

@@ -15,7 +15,7 @@ import retrofit2.http.Query
 interface ComickNetworkApi {
     @GET("top")
     suspend fun top(
-        @Query("gender") gender: Gender,
+        @Query("gender") gender: Gender? = null,
         @Query("accept_mature_content") isMature: Boolean = false,
     ): TopComics
 

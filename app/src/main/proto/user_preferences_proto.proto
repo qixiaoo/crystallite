@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "reading_mode_proto.proto";
+import "gender_proto.proto";
 
 option java_package = "io.github.qixiaoo.crystallite.datastore";
 option java_multiple_files = true;
@@ -9,4 +10,6 @@ message UserPreferencesProto {
   ReadingModeProto reading_mode = 1;
 
   bool volume_keys_navigation = 2;
+
+  GenderProto gender = 3;
 }

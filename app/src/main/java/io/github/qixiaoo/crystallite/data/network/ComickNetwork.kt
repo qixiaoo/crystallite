@@ -7,7 +7,7 @@ import javax.inject.Inject
 class ComickNetwork @Inject constructor() : ComickNetworkDataSource {
     private val comickNetworkApi = RetrofitServiceCreator.create<ComickNetworkApi>()
 
-    override suspend fun top(gender: Gender, isMature: Boolean) =
+    override suspend fun top(gender: Gender?, isMature: Boolean) =
         comickNetworkApi.top(gender, isMature)
 
     override suspend fun comic(slug: String) = comickNetworkApi.comic(slug)

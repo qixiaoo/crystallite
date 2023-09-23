@@ -11,24 +11,33 @@ import io.github.qixiaoo.crystallite.data.model.Comic
 import io.github.qixiaoo.crystallite.data.model.Gender
 import io.github.qixiaoo.crystallite.data.model.TopComics
 import io.github.qixiaoo.crystallite.data.repository.ComickRepository
+import io.github.qixiaoo.crystallite.data.repository.UserPreferencesRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val comickRepository: ComickRepository) :
-    ViewModel() {
+class HomeViewModel @Inject constructor(
+    comickRepository: ComickRepository,
+    userPreferencesRepository: UserPreferencesRepository,
+) : ViewModel() {
 
-    val topComicsUiState: StateFlow<TopComicsUiState> = topComicsUiState(comickRepository).stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = TopComicsUiState.Loading
-    )
+    val topComicsUiState: StateFlow<TopComicsUiState> =
+        topComicsUiState(
+            comickRepository = comickRepository,
+            userPreferencesRepository = userPreferencesRepository
+        ).stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = TopComicsUiState.Loading
+        )
 
     val news: StateFlow<List<List<Comic>>> =
         topComicsUiState.filter { it is TopComicsUiState.Success }
@@ -46,9 +55,18 @@ class HomeViewModel @Inject constructor(private val comickRepository: ComickRepo
 }
 
 
-private fun topComicsUiState(comickRepository: ComickRepository): Flow<TopComicsUiState> {
+@OptIn(ExperimentalCoroutinesApi::class)
+private fun topComicsUiState(
+    comickRepository: ComickRepository,
+    userPreferencesRepository: UserPreferencesRepository,
+): Flow<TopComicsUiState> {
     Log.v(::topComicsUiState.name, "fetch top comics")
-    return comickRepository.top(Gender.MALE).asResult().map { result ->
+
+    val genderStream =
+        userPreferencesRepository.userPreferences.map { if (it.gender == Gender.UNKNOWN) null else it.gender }
+    val topComicsStream = genderStream.flatMapLatest { comickRepository.top(gender = it) }
+
+    return topComicsStream.asResult().map { result ->
         when (result) {
             is Result.Error -> TopComicsUiState.Error(
                 message = result.exception?.message ?: result.exception.toString()

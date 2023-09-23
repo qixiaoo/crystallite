@@ -12,7 +12,7 @@ import io.github.qixiaoo.crystallite.data.model.TopComics
  * Interface representing network calls to the Comick backend
  */
 interface ComickNetworkDataSource {
-    suspend fun top(gender: Gender, isMature: Boolean): TopComics
+    suspend fun top(gender: Gender? = null, isMature: Boolean = false): TopComics
     suspend fun comic(slug: String): ComicDetail
     suspend fun chapters(hid: String, language: String? = null, page: Int? = null): ComicChapters
     suspend fun chapter(hid: String): ReadingChapter

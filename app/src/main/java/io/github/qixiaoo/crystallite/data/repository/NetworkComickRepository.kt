@@ -20,7 +20,7 @@ import javax.inject.Inject
 class NetworkComickRepository @Inject constructor(private val network: ComickNetworkDataSource) :
     ComickRepository {
 
-    override fun top(gender: Gender, isMature: Boolean): Flow<TopComics> {
+    override fun top(gender: Gender?, isMature: Boolean): Flow<TopComics> {
         return flow {
             val response = network.top(gender, isMature)
             emit(response)

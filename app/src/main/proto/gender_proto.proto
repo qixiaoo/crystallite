@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+option java_package = "io.github.qixiaoo.crystallite.datastore";
+option java_multiple_files = true;
+
+enum GenderProto {
+  GENDER_UNKNOWN = 0;
+  GENDER_MALE = 1;
+  GENDER_FEMALE = 2;
+}

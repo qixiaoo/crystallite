@@ -1,5 +1,6 @@
 package io.github.qixiaoo.crystallite.data.repository
 
+import io.github.qixiaoo.crystallite.data.model.Gender
 import io.github.qixiaoo.crystallite.data.model.ReadingMode
 import io.github.qixiaoo.crystallite.data.model.UserPreferences
 import io.github.qixiaoo.crystallite.datastore.UserPreferencesDataSource
@@ -16,4 +17,8 @@ class LocalUserPreferencesRepository @Inject constructor(
 
     override suspend fun setVolumeKeysNavigation(enabled: Boolean) =
         userPreferencesDataSource.setVolumeKeysNavigation(enabled)
+
+    override suspend fun setGender(gender: Gender) {
+        userPreferencesDataSource.setGender(gender)
+    }
 }
