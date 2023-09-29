@@ -1,11 +1,12 @@
 package io.github.qixiaoo.crystallite.data.network
 
 import io.github.qixiaoo.crystallite.data.model.Gender
+import retrofit2.Retrofit
 import javax.inject.Inject
 
 
-class ComickNetwork @Inject constructor() : ComickNetworkDataSource {
-    private val comickNetworkApi = RetrofitServiceCreator.create<ComickNetworkApi>()
+class ComickNetwork @Inject constructor(private val retrofit: Retrofit) : ComickNetworkDataSource {
+    private val comickNetworkApi = retrofit.create(ComickNetworkApi::class.java)
 
     override suspend fun top(gender: Gender?, isMature: Boolean) =
         comickNetworkApi.top(gender, isMature)

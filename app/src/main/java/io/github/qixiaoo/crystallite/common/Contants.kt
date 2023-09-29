@@ -1,5 +1,7 @@
 package io.github.qixiaoo.crystallite.common
 
+const val API_BASE_URL = "https://api.comick.fun/"
+
 const val PICTURES_SITE = "https://meo.comick.pictures/"
 
 const val GRID_ROW_ITEM_COUNT = 3
