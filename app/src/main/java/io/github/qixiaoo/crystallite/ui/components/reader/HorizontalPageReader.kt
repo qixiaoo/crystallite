@@ -27,7 +27,7 @@ import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
 
 
 @Composable
-fun SinglePageReader(
+fun HorizontalPageReader(
     modifier: Modifier = Modifier,
     current: Int = 0,
     imageList: List<String>,
@@ -94,9 +94,9 @@ fun SinglePageReader(
 
 @Preview(showBackground = true)
 @Composable
-fun SinglePageReaderPreview() {
+fun HorizontalPageReaderPreview() {
     CrystalliteTheme {
-        SinglePageReader(
+        HorizontalPageReader(
             imageList = listOf(
                 "https://meo.comick.pictures/1-uBH4-P_O1_f7S.jpg",
                 "https://meo.comick.pictures/2-IeaFh4XcsBWFY.png",

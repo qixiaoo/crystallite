@@ -93,6 +93,7 @@ fun ReadingMode.toResourceId(): Int {
     return when (this) {
         ReadingMode.LeftToRight -> R.string.ltr
         ReadingMode.RightToLeft -> R.string.rtl
+        ReadingMode.ContinuousVertical -> R.string.continuous_vertical
     }
 }
 

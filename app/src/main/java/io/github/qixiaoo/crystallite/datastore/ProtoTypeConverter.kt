@@ -7,6 +7,7 @@ fun ReadingModeProto.toModel(): ReadingMode {
     return when (this) {
         ReadingModeProto.READING_MODE_LTR -> ReadingMode.LeftToRight
         ReadingModeProto.READING_MODE_RTL -> ReadingMode.RightToLeft
+        ReadingModeProto.READING_MODE_CONTINUOUS_VERTICAL -> ReadingMode.ContinuousVertical
         ReadingModeProto.UNRECOGNIZED -> ReadingMode.LeftToRight
     }
 }
@@ -15,6 +16,7 @@ fun ReadingMode.toProto(): ReadingModeProto {
     return when (this) {
         ReadingMode.LeftToRight -> ReadingModeProto.READING_MODE_LTR
         ReadingMode.RightToLeft -> ReadingModeProto.READING_MODE_RTL
+        ReadingMode.ContinuousVertical -> ReadingModeProto.READING_MODE_CONTINUOUS_VERTICAL
     }
 }
 

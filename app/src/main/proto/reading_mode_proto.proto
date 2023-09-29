@@ -6,4 +6,5 @@ option java_multiple_files = true;
 enum ReadingModeProto {
   READING_MODE_LTR = 0;
   READING_MODE_RTL = 1;
+  READING_MODE_CONTINUOUS_VERTICAL = 2;
 }

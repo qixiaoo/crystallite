@@ -47,10 +47,13 @@ fun ReaderHud(
         label = "page navigator bottom padding"
     )
 
+    val defaultDirection = LocalLayoutDirection.current
+
     val direction = remember(readingMode) {
         when (readingMode) {
             ReadingMode.LeftToRight -> LayoutDirection.Ltr
             ReadingMode.RightToLeft -> LayoutDirection.Rtl
+            else -> defaultDirection
         }
     }
 

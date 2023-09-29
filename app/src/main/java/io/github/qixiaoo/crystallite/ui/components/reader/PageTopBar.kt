@@ -37,7 +37,8 @@ import io.github.qixiaoo.crystallite.ui.common.toResourceId
 import io.github.qixiaoo.crystallite.ui.theme.CrystalliteTheme
 
 
-val readingModeList = listOf(ReadingMode.LeftToRight, ReadingMode.RightToLeft)
+val readingModeList =
+    listOf(ReadingMode.LeftToRight, ReadingMode.RightToLeft, ReadingMode.ContinuousVertical)
 
 
 @OptIn(ExperimentalMaterial3Api::class)

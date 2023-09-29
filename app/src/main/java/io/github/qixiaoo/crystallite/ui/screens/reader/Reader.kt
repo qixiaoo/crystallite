@@ -2,6 +2,8 @@ package io.github.qixiaoo.crystallite.ui.screens.reader
 
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -11,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.focus.FocusRequester
@@ -27,8 +30,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.qixiaoo.crystallite.data.model.ReadingMode
 import io.github.qixiaoo.crystallite.ui.components.ErrorMessage
+import io.github.qixiaoo.crystallite.ui.components.reader.HorizontalPageReader
 import io.github.qixiaoo.crystallite.ui.components.reader.ReaderHud
-import io.github.qixiaoo.crystallite.ui.components.reader.SinglePageReader
+import io.github.qixiaoo.crystallite.ui.components.reader.VerticalPageReader
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 
@@ -71,32 +76,46 @@ private fun ReaderContent(
         focusRequester.requestFocus()
     }
 
+    val currentPage = current.value
     val imageList = readerUiState.imageList
     val readingModeValue = readingMode.value
     val readingChapter = readerUiState.readingChapter.chapter
 
-    val direction = when (readingModeValue) {
-        ReadingMode.LeftToRight -> LayoutDirection.Ltr
-        ReadingMode.RightToLeft -> LayoutDirection.Rtl
+    val pageReaderState = rememberLazyListState(initialFirstVisibleItemIndex = currentPage)
+    val onPageChange: (Int) -> Unit = remember(readerUiState, pageReaderState, readingModeValue) {
+        {
+            coroutineScope.launch {
+                readerUiState.setCurrentPage(it)
+                if (readingModeValue == ReadingMode.ContinuousVertical) {
+                    pageReaderState.scrollToItem(it)
+                }
+            }
+        }
     }
 
-    CompositionLocalProvider(LocalLayoutDirection provides direction) {
-        SinglePageReader(
-            current = current.value,
-            imageList = imageList,
-            onClick = { isHudVisible = !isHudVisible },
-            onPageChange = { coroutineScope.launch { readerUiState.setCurrentPage(it) } }
-        )
-    }
+    PageReader(
+        state = pageReaderState,
+        current = currentPage,
+        imageList = imageList,
+        readingMode = readingModeValue,
+        onClick = { isHudVisible = !isHudVisible },
+        onPageChange = {
+            coroutineScope.launch {
+                // when the `PageReader` is in the continuous vertical mode,
+                // no need to call `pageReaderState.scrollToItem`, otherwise the fling animation of the `LazyColumn` will stop
+                readerUiState.setCurrentPage(it)
+            }
+        }
+    )
 
     ReaderHud(
-        current = current.value,
+        current = currentPage,
         pageCount = imageList.size,
         title = readingChapter.mdComic?.title,
         chapter = readingChapter.chapter,
         chapterTitle = readingChapter.title,
         readingMode = readingModeValue,
-        onPageChange = { coroutineScope.launch { readerUiState.setCurrentPage(it) } },
+        onPageChange = onPageChange,
         isReaderHudVisible = isHudVisible,
         enablePreviousChapter = readerUiState.isPrevChapterEnabled,
         enableNextChapter = readerUiState.isNextChapterEnabled,
@@ -108,12 +127,75 @@ private fun ReaderContent(
             .focusRequester(focusRequester)
             .focusable()
             .volumeKeysNavigation(
-                currentPage = current.value,
+                currentPage = currentPage,
                 totalPage = imageList.size,
                 volumeKeysNavigationEnabled = volumeKeysNavigation.value,
-                onPageChange = { coroutineScope.launch { readerUiState.setCurrentPage(it) } }
+                onPageChange = onPageChange
             )
     )
+}
+
+
+@Composable
+private fun PageReader(
+    state: LazyListState,
+    current: Int,
+    imageList: List<String>,
+    readingMode: ReadingMode,
+    onClick: () -> Unit = {},
+    onPageChange: (Int) -> Unit = {},
+) {
+    val direction = remember(readingMode) {
+        when (readingMode) {
+            ReadingMode.LeftToRight -> LayoutDirection.Ltr
+            ReadingMode.RightToLeft -> LayoutDirection.Rtl
+            else -> LayoutDirection.Ltr
+        }
+    }
+
+    val updatedCurrent by rememberUpdatedState(current)
+    val updatedOnPageChange by rememberUpdatedState(onPageChange)
+
+    LaunchedEffect(readingMode, state) {
+        if (readingMode != ReadingMode.ContinuousVertical) {
+            return@LaunchedEffect
+        }
+
+        // when the `PageReader` is in the continuous vertical mode,
+        // listen to the `firstVisibleItemIndex` changes and call `onPageChange`
+        snapshotFlow { state.firstVisibleItemIndex }
+            .distinctUntilChanged()
+            .collect {
+                updatedOnPageChange(it)
+            }
+    }
+
+    LaunchedEffect(readingMode) {
+        // when the readingMode changed to the `ReadingMode.ContinuousVertical`,
+        // call the `scrollToItem` to scroll to the current page
+        if (readingMode == ReadingMode.ContinuousVertical) {
+            state.scrollToItem(index = updatedCurrent)
+        }
+    }
+
+    if (readingMode == ReadingMode.LeftToRight || readingMode == ReadingMode.RightToLeft) {
+        CompositionLocalProvider(LocalLayoutDirection provides direction) {
+            HorizontalPageReader(
+                current = updatedCurrent,
+                imageList = imageList,
+                onClick = onClick,
+                onPageChange = updatedOnPageChange
+            )
+        }
+    }
+
+    if (readingMode == ReadingMode.ContinuousVertical) {
+        VerticalPageReader(
+            state = state,
+            imageList = imageList,
+            onClick = onClick,
+        )
+    }
 }
 
 
