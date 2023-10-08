@@ -1,4 +1,7 @@
-# Crystallite
+<div align="center">
+  <img src="https://raw.githubusercontent.com/qixiaoo/crystallite/master/app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp" />
+  <h1>Crystallite</h1>
+</div>
 
 ## Introduction
 
