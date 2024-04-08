@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.outlined.SystemUpdate
 import androidx.compose.material3.DropdownMenu
@@ -17,9 +17,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PlainTooltipBox
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -79,7 +82,7 @@ fun PageTopBar(
                     modifier = Modifier.padding(start = 5.dp, end = 8.dp)
                 ) {
                     Icon(
-                        Icons.Default.ArrowBack,
+                        Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "navigate back",
                     )
                 }
@@ -105,12 +108,14 @@ fun PageTopBar(
 
             // reading mode
             Box(modifier = Modifier.wrapContentSize(Alignment.TopStart)) {
-                PlainTooltipBox(tooltip = { Text(stringResource(R.string.reading_mode)) }) {
+                TooltipBox(
+                    positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                    tooltip = { PlainTooltip { Text(stringResource(R.string.reading_mode)) } },
+                    state = rememberTooltipState()
+                ) {
                     IconButton(
                         onClick = { readingModeExpanded = true },
-                        modifier = Modifier
-                            .tooltipAnchor()
-                            .padding(horizontal = 5.dp)
+                        modifier = Modifier.padding(horizontal = 5.dp)
                     ) {
                         Icon(
                             Icons.Outlined.SystemUpdate,

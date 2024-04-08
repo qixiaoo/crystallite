@@ -20,10 +20,10 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.outlined.BookmarkAdd
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -384,6 +384,6 @@ private fun Chapter(chapter: ChapterDetail, onChapterClick: (chapter: ChapterDet
             Text(text = chapter.lang, style = typography.bodySmall)
         }
         Spacer(modifier = Modifier.height(5.dp))
-        Divider()
+        HorizontalDivider()
     }
 }
